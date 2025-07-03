@@ -101,9 +101,10 @@ export const LivingAISystem = ({ className = "" }: LivingAISystemProps) => {
 
   // Fixed positioning to avoid overlaps - consistent radius and spacing
   const getAgentPosition = (agent: AgentWithAngle) => {
-    const baseRadius = 160; // Increased for better spacing
-    const gentleFloat = Math.sin((systemPhase + agent.id * 20) * 0.02) * 6; // Gentle floating
-    const radius = baseRadius + gentleFloat;
+    const baseRadius = 170; // Increased for better spacing
+    const gentleFloat = Math.sin((systemPhase + agent.id * 20) * 0.02) * 8; // Gentle floating
+    const orbitOffset = Math.sin((systemPhase + agent.id * 15) * 0.015) * 3; // Gentle orbital motion
+    const radius = baseRadius + gentleFloat + orbitOffset;
     const radian = (agent.angle * Math.PI) / 180;
     
     return {
@@ -114,7 +115,7 @@ export const LivingAISystem = ({ className = "" }: LivingAISystemProps) => {
 
   // Fixed label positioning - no overlaps, consistent distance
   const getLabelPosition = (agent: AgentWithAngle) => {
-    const labelRadius = 210; // Fixed distance for all labels
+    const labelRadius = 230; // Increased distance for better spacing
     const radian = (agent.angle * Math.PI) / 180;
     
     return {
@@ -132,16 +133,17 @@ export const LivingAISystem = ({ className = "" }: LivingAISystemProps) => {
   return (
     <div className={`relative w-96 h-96 ${className}`}>
       {/* Layer 1: Background Intelligence Grid - reduced opacity for premium feel */}
-      <div style={{ opacity: 0.12 }}>
+      <div style={{ opacity: 0.08 }}>
         <BackgroundIntelligenceGrid />
       </div>
 
       {/* Layer 2: Business OS Core - enlarged and enhanced */}
       <div className="absolute inset-0 flex items-center justify-center">
         <BusinessOSCore 
-          className={`transition-all duration-1000 scale-110 ${
+          className={`transition-all duration-1000 scale-125 ${
             isLoaded ? 'animate-fade-in opacity-100' : 'opacity-0'
           }`}
+          hoveredAgent={hoveredAgent}
         />
       </div>
 
@@ -189,21 +191,24 @@ export const LivingAISystem = ({ className = "" }: LivingAISystemProps) => {
       })}
 
       {/* Ambient glow particles for living ecosystem feel */}
-      {[...Array(6)].map((_, i) => {
-        const floatRadius = 80 + (i * 30);
-        const angle = (systemPhase + i * 60) * 0.5;
+      {[...Array(8)].map((_, i) => {
+        const floatRadius = 90 + (i * 25);
+        const angle = (systemPhase + i * 45) * 0.3;
         const x = 192 + Math.cos(angle * Math.PI / 180) * floatRadius;
         const y = 192 + Math.sin(angle * Math.PI / 180) * floatRadius;
+        const opacity = 0.15 + Math.sin((systemPhase + i * 30) * 0.05) * 0.1;
         
         return (
           <div
             key={`particle-${i}`}
-            className="absolute w-1 h-1 bg-blue-400/30 rounded-full animate-pulse"
+            className="absolute rounded-full transition-opacity duration-1000"
             style={{
               left: `${x}px`,
               top: `${y}px`,
-              animationDelay: `${i * 0.8}s`,
-              animationDuration: '4s'
+              width: `${2 + Math.sin((systemPhase + i * 20) * 0.04)}px`,
+              height: `${2 + Math.sin((systemPhase + i * 20) * 0.04)}px`,
+              background: `radial-gradient(circle, rgba(139, 92, 246, ${opacity}) 0%, transparent 70%)`,
+              boxShadow: `0 0 ${4 + Math.sin((systemPhase + i * 15) * 0.06) * 2}px rgba(139, 92, 246, ${opacity * 0.8})`
             }}
           />
         );

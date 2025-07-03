@@ -104,21 +104,21 @@ export const AIAgentNode = ({
           isHovered ? 'opacity-100 scale-105' : 'opacity-90'
         }`}
         style={{
-          left: `${labelPosition.x - 60}px`,
-          top: `${labelPosition.y - 12}px`,
-          width: '120px',
+          left: `${labelPosition.x - 70}px`,
+          top: `${labelPosition.y - 14}px`,
+          width: '140px',
           textAlign: 'center',
-          background: `linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85))`,
-          color: agent.color,
-          textShadow: `0 0 8px ${agent.color}30, 0 1px 3px rgba(0,0,0,0.1)`,
-          backdropFilter: 'blur(10px)',
-          border: `1px solid ${agent.color}20`,
-          borderRadius: '16px',
-          padding: '6px 12px',
-          letterSpacing: '0.025em',
+          background: `linear-gradient(135deg, rgba(255,255,255,0.98), rgba(255,255,255,0.92))`,
+          color: '#1a1a1a',
+          textShadow: `0 0 12px ${agent.color}25, 0 1px 2px rgba(0,0,0,0.08)`,
+          backdropFilter: 'blur(12px)',
+          border: `1.5px solid ${agent.color}15`,
+          borderRadius: '20px',
+          padding: '8px 16px',
+          letterSpacing: '0.02em',
           fontSize: '13px',
           fontWeight: '600',
-          boxShadow: `0 4px 12px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.5) inset`
+          boxShadow: `0 8px 25px rgba(0,0,0,0.08), 0 0 0 1px rgba(255,255,255,0.6) inset, 0 0 20px ${agent.color}10`
         }}
       >
         {agent.label}

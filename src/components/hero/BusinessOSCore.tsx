@@ -4,9 +4,10 @@ import { useState, useEffect, useRef } from "react";
 interface BusinessOSCoreProps {
   className?: string;
   onMouseMove?: (x: number, y: number) => void;
+  hoveredAgent?: number | null;
 }
 
-export const BusinessOSCore = ({ className = "", onMouseMove }: BusinessOSCoreProps) => {
+export const BusinessOSCore = ({ className = "", onMouseMove, hoveredAgent }: BusinessOSCoreProps) => {
   const [thinkingPhase, setThinkingPhase] = useState(0);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const coreRef = useRef<HTMLDivElement>(null);
@@ -33,24 +34,33 @@ export const BusinessOSCore = ({ className = "", onMouseMove }: BusinessOSCorePr
   };
 
   const getBreathingScale = () => {
-    return 1 + Math.sin(thinkingPhase * 0.04) * 0.06; // Gentle breathing
+    const baseScale = 1 + Math.sin(thinkingPhase * 0.035) * 0.08; // Enhanced breathing
+    return hoveredAgent ? baseScale * 1.05 : baseScale; // Slight scale on hover
   };
 
   const getThinkingIntensity = () => {
-    return 0.7 + Math.sin(thinkingPhase * 0.06) * 0.25;
+    const baseIntensity = 0.75 + Math.sin(thinkingPhase * 0.055) * 0.2;
+    return hoveredAgent ? Math.min(baseIntensity * 1.15, 1) : baseIntensity;
+  };
+
+  const getCoreOpacity = () => {
+    return hoveredAgent ? 0.6 : 1;
   };
 
   return (
     <div 
       ref={coreRef}
-      className={`relative w-36 h-36 ${className}`}
+      className={`relative w-40 h-40 transition-all duration-500 ${className}`}
       onMouseMove={handleMouseMove}
-      style={{ cursor: 'none' }}
+      style={{ 
+        cursor: 'none',
+        opacity: getCoreOpacity()
+      }}
     >
       <svg
-        width="144"
-        height="144"
-        viewBox="0 0 144 144"
+        width="160"
+        height="160"
+        viewBox="0 0 160 160"
         className="absolute inset-0"
       >
         <defs>
@@ -72,10 +82,10 @@ export const BusinessOSCore = ({ className = "", onMouseMove }: BusinessOSCorePr
 
         {/* Orbital particles - more elegant */}
         {[...Array(8)].map((_, i) => {
-          const angle = (i * 45) + (thinkingPhase * 1.5);
-          const radius = 50 + Math.sin((thinkingPhase + i * 25) * 0.04) * 8;
-          const x = 72 + Math.cos(angle * Math.PI / 180) * radius;
-          const y = 72 + Math.sin(angle * Math.PI / 180) * radius;
+          const angle = (i * 45) + (thinkingPhase * 1.2);
+          const radius = 55 + Math.sin((thinkingPhase + i * 25) * 0.035) * 10;
+          const x = 80 + Math.cos(angle * Math.PI / 180) * radius;
+          const y = 80 + Math.sin(angle * Math.PI / 180) * radius;
           
           return (
             <circle
@@ -92,20 +102,20 @@ export const BusinessOSCore = ({ className = "", onMouseMove }: BusinessOSCorePr
 
         {/* Gentle breathing outer ring */}
         <circle
-          cx="72"
-          cy="72"
-          r={55 + Math.sin(thinkingPhase * 0.03) * 5}
+          cx="80"
+          cy="80"
+          r={60 + Math.sin(thinkingPhase * 0.025) * 6}
           fill="none"
           stroke="#6366F1"
-          strokeWidth="1.5"
-          strokeOpacity="0.3"
+          strokeWidth="2"
+          strokeOpacity="0.25"
           filter="url(#coreGlow)"
         />
 
         {/* Main core with enhanced breathing */}
-        <g transform={`translate(72, 72) scale(${getBreathingScale()}) translate(${mousePosition.x}, ${mousePosition.y})`}>
+        <g transform={`translate(80, 80) scale(${getBreathingScale()}) translate(${mousePosition.x}, ${mousePosition.y})`}>
           <circle
-            r="38"
+            r="42"
             fill="url(#coreGradient)"
             filter="url(#coreGlow)"
             style={{ opacity: getThinkingIntensity() }}
@@ -113,29 +123,29 @@ export const BusinessOSCore = ({ className = "", onMouseMove }: BusinessOSCorePr
           
           {/* Inner neural core */}
           <circle
-            r="28"
+            r="32"
             fill="#8B5CF6"
-            opacity="0.5"
+            opacity="0.4"
             className="animate-pulse"
-            style={{ animationDuration: '3s' }}
+            style={{ animationDuration: '4s' }}
           />
           
           {/* Central thinking node */}
           <circle
-            r="15"
+            r="18"
             fill="#6366F1"
-            opacity={0.8 + Math.sin(thinkingPhase * 0.1) * 0.2}
+            opacity={0.85 + Math.sin(thinkingPhase * 0.08) * 0.15}
             filter="url(#coreGlow)"
           />
         </g>
 
         {/* Data pulse streams - more refined */}
-        {[0, 60, 120, 180, 240, 300].map((angle, i) => {
-          const streamLength = 45;
-          const startX = 72 + Math.cos(angle * Math.PI / 180) * 38;
-          const startY = 72 + Math.sin(angle * Math.PI / 180) * 38;
-          const endX = 72 + Math.cos(angle * Math.PI / 180) * (38 + streamLength);
-          const endY = 72 + Math.sin(angle * Math.PI / 180) * (38 + streamLength);
+        {[0, 72, 144, 216, 288].map((angle, i) => {
+          const streamLength = 50;
+          const startX = 80 + Math.cos(angle * Math.PI / 180) * 42;
+          const startY = 80 + Math.sin(angle * Math.PI / 180) * 42;
+          const endX = 80 + Math.cos(angle * Math.PI / 180) * (42 + streamLength);
+          const endY = 80 + Math.sin(angle * Math.PI / 180) * (42 + streamLength);
           
           return (
             <line

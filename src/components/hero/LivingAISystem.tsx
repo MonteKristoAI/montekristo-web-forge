@@ -214,19 +214,6 @@ export const LivingAISystem = ({ className = "" }: LivingAISystemProps) => {
         );
       })}
 
-      {/* Minimal system status indicator */}
-      <div className="absolute bottom-4 right-4 text-xs font-inter font-medium">
-        <div className="flex items-center gap-2 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 border border-gray-200/30 shadow-sm">
-          <div 
-            className="w-2 h-2 rounded-full bg-emerald-500"
-            style={{ 
-              animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-              filter: 'drop-shadow(0 0 4px rgba(16, 185, 129, 0.4))'
-            }}
-          />
-          <span className="text-[#041122]/70 font-medium">System Active</span>
-        </div>
-      </div>
     </div>
   );
 };

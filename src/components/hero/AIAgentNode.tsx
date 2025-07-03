@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 
 interface AIAgentNodeProps {
@@ -10,6 +11,7 @@ interface AIAgentNodeProps {
     benefit: string;
   };
   position: { x: number; y: number };
+  labelPosition: { x: number; y: number };
   isHovered: boolean;
   onHover: (id: number | null) => void;
   pulsePhase: number;
@@ -20,6 +22,7 @@ interface AIAgentNodeProps {
 export const AIAgentNode = ({ 
   agent, 
   position, 
+  labelPosition,
   isHovered, 
   onHover, 
   pulsePhase,
@@ -67,6 +70,11 @@ export const AIAgentNode = ({
                 <feMergeNode in="SourceGraphic"/>
               </feMerge>
             </filter>
+
+            <linearGradient id={`labelGradient-${agent.id}`} x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor={agent.color} stopOpacity="0.9"/>
+              <stop offset="100%" stopColor={agent.color} stopOpacity="0.7"/>
+            </linearGradient>
           </defs>
 
           {/* Outer glow ring */}
@@ -97,16 +105,26 @@ export const AIAgentNode = ({
         </svg>
       </div>
 
-      {/* Agent Label */}
+      {/* Enhanced Agent Label with collision avoidance */}
       <div
-        className={`text-xs font-medium text-[#041122] transition-all duration-300 ${
-          isHovered ? 'opacity-100 scale-110 font-semibold' : 'opacity-80'
+        className={`font-inter font-medium text-xs transition-all duration-300 ${
+          isHovered ? 'opacity-100 scale-105 font-semibold' : 'opacity-90'
         }`}
         style={{
-          left: `${position.x - 35}px`,
-          top: `${position.y + 30}px`,
-          width: '70px',
-          textAlign: 'center'
+          left: `${labelPosition.x - 45}px`,
+          top: `${labelPosition.y - 8}px`,
+          width: '90px',
+          textAlign: 'center',
+          background: `linear-gradient(135deg, ${agent.color}20, ${agent.color}10)`,
+          color: agent.color,
+          textShadow: `0 0 10px ${agent.color}40, 0 1px 2px rgba(255,255,255,0.8)`,
+          backdropFilter: 'blur(8px)',
+          border: `1px solid ${agent.color}30`,
+          borderRadius: '12px',
+          padding: '4px 8px',
+          letterSpacing: '0.025em',
+          fontSize: '11px',
+          fontWeight: '500'
         }}
       >
         {agent.label}
@@ -115,10 +133,10 @@ export const AIAgentNode = ({
       {/* Hover Tooltip */}
       {isHovered && (
         <div
-          className="bg-white/95 backdrop-blur-sm border border-gray-200 rounded-lg px-3 py-2 text-xs text-[#041122] shadow-lg animate-fade-in pointer-events-none"
+          className="bg-white/95 backdrop-blur-sm border border-gray-200 rounded-lg px-3 py-2 text-xs text-[#041122] shadow-lg animate-fade-in pointer-events-none font-inter"
           style={{
             left: `${position.x - 60}px`,
-            top: `${position.y - 55}px`,
+            top: `${position.y - 65}px`,
             width: '120px',
             textAlign: 'center',
             zIndex: 10
@@ -131,7 +149,7 @@ export const AIAgentNode = ({
       {/* Benefit Popup */}
       {showBenefit && (
         <div
-          className="bg-gradient-to-r from-green-500 to-emerald-600 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-lg animate-fade-in pointer-events-none"
+          className="bg-gradient-to-r from-green-500 to-emerald-600 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-lg animate-fade-in pointer-events-none font-inter"
           style={{
             left: `${position.x - 40}px`,
             top: `${position.y - 70}px`,

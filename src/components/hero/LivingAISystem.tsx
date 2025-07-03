@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { BackgroundIntelligenceGrid } from "./BackgroundIntelligenceGrid";
 import { BusinessOSCore } from "./BusinessOSCore";
@@ -122,6 +121,19 @@ export const LivingAISystem = ({ className = "" }: LivingAISystemProps) => {
     };
   };
 
+  // Enhanced label positioning with collision avoidance
+  const getLabelPosition = (agent: AgentWithAngle) => {
+    const nodePos = getAgentPosition(agent);
+    const labelRadius = 180; // Consistent radius for all labels
+    const adjustedAngle = agent.angle + (adaptationPhase * 8) + Math.sin(systemPhase * 0.02) * 5;
+    const radian = (adjustedAngle * Math.PI) / 180;
+    
+    return {
+      x: 192 + Math.cos(radian) * labelRadius,
+      y: 192 + Math.sin(radian) * labelRadius
+    };
+  };
+
   const agentsWithAngles: AgentWithAngle[] = agents.map((agent, i) => ({
     ...agent,
     angle: i * 72 // 360/5 agents
@@ -141,7 +153,7 @@ export const LivingAISystem = ({ className = "" }: LivingAISystemProps) => {
         />
       </div>
 
-      {/* Layer 3: Connection Lines */}
+      {/* Layer 3: Connection Lines from Business OS to all agents */}
       {isLoaded && agentsWithAngles.map(agent => {
         const agentPos = getAgentPosition(agent);
         const corePos = { x: 192, y: 192 };
@@ -162,9 +174,10 @@ export const LivingAISystem = ({ className = "" }: LivingAISystemProps) => {
         );
       })}
 
-      {/* Layer 3: AI Agent Nodes */}
+      {/* Layer 4: AI Agent Nodes with enhanced positioning */}
       {agentsWithAngles.map(agent => {
         const position = getAgentPosition(agent);
+        const labelPosition = getLabelPosition(agent);
         const isHovered = hoveredAgent === agent.id;
         
         return (
@@ -172,6 +185,7 @@ export const LivingAISystem = ({ className = "" }: LivingAISystemProps) => {
             key={`agent-${agent.id}`}
             agent={agent}
             position={position}
+            labelPosition={labelPosition}
             isHovered={isHovered}
             onHover={setHoveredAgent}
             pulsePhase={pulsePhase}
@@ -215,14 +229,14 @@ export const LivingAISystem = ({ className = "" }: LivingAISystemProps) => {
         </div>
       )}
 
-      {/* System Status Indicator */}
-      <div className="absolute bottom-4 right-4 text-xs text-[#041122]/60 font-medium">
-        <div className="flex items-center gap-2">
+      {/* Enhanced System Status Indicator */}
+      <div className="absolute bottom-4 right-4 text-xs font-inter font-medium">
+        <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full px-3 py-1.5 border border-gray-200/50">
           <div 
             className="w-2 h-2 rounded-full bg-green-500 animate-pulse"
             style={{ animationDuration: '1.5s' }}
           />
-          <span>System Adapting</span>
+          <span className="text-[#041122]/70">System Adapting</span>
         </div>
       </div>
     </div>

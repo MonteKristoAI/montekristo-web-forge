@@ -1,4 +1,3 @@
-
 interface ConnectionLineProps {
   from: { x: number; y: number };
   to: { x: number; y: number };
@@ -6,6 +5,7 @@ interface ConnectionLineProps {
   isActive: boolean;
   pulsePhase: number;
   className?: string;
+  style?: React.CSSProperties;
 }
 
 export const ConnectionLine = ({ 
@@ -14,7 +14,8 @@ export const ConnectionLine = ({
   color, 
   isActive, 
   pulsePhase,
-  className = "" 
+  className = "",
+  style
 }: ConnectionLineProps) => {
   const midX = (from.x + to.x) / 2;
   const midY = (from.y + to.y) / 2 - 20; // Curve upward
@@ -24,7 +25,7 @@ export const ConnectionLine = ({
   return (
     <svg 
       className={`absolute inset-0 pointer-events-none ${className}`}
-      style={{ zIndex: 1 }}
+      style={{ zIndex: 1, ...style }}
     >
       <defs>
         <linearGradient id={`dataPulse-${color}`} x1="0%" y1="0%" x2="100%" y2="0%">

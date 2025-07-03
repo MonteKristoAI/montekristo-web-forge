@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 
 interface AIAgentNodeProps {
@@ -15,6 +14,7 @@ interface AIAgentNodeProps {
   onHover: (id: number | null) => void;
   pulsePhase: number;
   className?: string;
+  style?: React.CSSProperties;
 }
 
 export const AIAgentNode = ({ 
@@ -23,7 +23,8 @@ export const AIAgentNode = ({
   isHovered, 
   onHover, 
   pulsePhase,
-  className = "" 
+  className = "",
+  style
 }: AIAgentNodeProps) => {
   const [showBenefit, setShowBenefit] = useState(false);
 
@@ -38,7 +39,7 @@ export const AIAgentNode = ({
   });
 
   return (
-    <div className={`absolute pointer-events-none ${className}`}>
+    <div className={`absolute pointer-events-none ${className}`} style={style}>
       {/* Agent Node */}
       <div
         className="relative cursor-pointer pointer-events-auto"

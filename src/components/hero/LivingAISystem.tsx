@@ -9,6 +9,16 @@ interface LivingAISystemProps {
   className?: string;
 }
 
+interface AgentWithAngle {
+  id: number;
+  label: string;
+  color: string;
+  gradient: string;
+  description: string;
+  benefit: string;
+  angle: number;
+}
+
 const agents = [
   {
     id: 1,
@@ -99,7 +109,7 @@ export const LivingAISystem = ({ className = "" }: LivingAISystemProps) => {
     return () => clearInterval(interval);
   }, []);
 
-  const getAgentPosition = (agent: typeof agents[0]) => {
+  const getAgentPosition = (agent: AgentWithAngle) => {
     const baseRadius = 140;
     const adaptationOffset = Math.sin((adaptationPhase + agent.id) * 0.5) * 15;
     const radius = baseRadius + adaptationOffset + (agent.id % 2 === 0 ? 12 : -12);
@@ -112,7 +122,7 @@ export const LivingAISystem = ({ className = "" }: LivingAISystemProps) => {
     };
   };
 
-  const agentsWithAngles = agents.map((agent, i) => ({
+  const agentsWithAngles: AgentWithAngle[] = agents.map((agent, i) => ({
     ...agent,
     angle: i * 72 // 360/5 agents
   }));
@@ -148,7 +158,6 @@ export const LivingAISystem = ({ className = "" }: LivingAISystemProps) => {
             className={`transition-all duration-500 ${
               isLoaded ? 'animate-fade-in' : 'opacity-0'
             }`}
-            style={{ animationDelay: `${agent.id * 200}ms` }}
           />
         );
       })}
@@ -169,7 +178,6 @@ export const LivingAISystem = ({ className = "" }: LivingAISystemProps) => {
             className={`transition-all duration-700 ${
               isLoaded ? 'animate-fade-in opacity-100' : 'opacity-0'
             }`}
-            style={{ animationDelay: `${agent.id * 300 + 500}ms` }}
           />
         );
       })}

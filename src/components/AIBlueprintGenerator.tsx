@@ -1,35 +1,105 @@
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { BackgroundGrid } from "./ai-system/BackgroundGrid";
+import { BusinessOSCore } from "./ai-system/BusinessOSCore";
+import { AIAgent } from "./ai-system/AIAgent";
+import { ImpactOverlay } from "./ai-system/ImpactOverlay";
 
 interface AIBlueprintGeneratorProps {
   className?: string;
 }
 
 const agents = [
-  { id: 1, label: "CRM Sync", angle: 0, color: "#8B5CF6" },
-  { id: 2, label: "Outreach Agent", angle: 72, color: "#34D399" },
-  { id: 3, label: "Content Repurposer", angle: 144, color: "#0EA5E9" },
-  { id: 4, label: "Lead Qualifier", angle: 216, color: "#F59E0B" },
-  { id: 5, label: "Sales Trainer", angle: 288, color: "#EF4444" }
+  { 
+    id: 1, 
+    label: "Lead Qualifier", 
+    angle: 0, 
+    gradientStart: "#F59E0B", 
+    gradientEnd: "#F43F5E",
+    benefit: "Identifies high-intent prospects with 89% accuracy"
+  },
+  { 
+    id: 2, 
+    label: "Outreach Agent", 
+    angle: 72, 
+    gradientStart: "#06B6D4", 
+    gradientEnd: "#3B82F6",
+    benefit: "Personalizes outreach at scale with human-like precision"
+  },
+  { 
+    id: 3, 
+    label: "CRM Sync", 
+    angle: 144, 
+    gradientStart: "#A855F7", 
+    gradientEnd: "#6366F1",
+    benefit: "Automatically syncs and enriches contact data"
+  },
+  { 
+    id: 4, 
+    label: "Content Repurposer", 
+    angle: 216, 
+    gradientStart: "#10B981", 
+    gradientEnd: "#3B82F6",
+    benefit: "Transforms one piece into 10+ formats instantly"
+  },
+  { 
+    id: 5, 
+    label: "Sales Trainer", 
+    angle: 288, 
+    gradientStart: "#EC4899", 
+    gradientEnd: "#8B5CF6",
+    benefit: "Provides real-time coaching during sales calls"
+  }
 ];
 
 export const AIBlueprintGenerator = ({ className = "" }: AIBlueprintGeneratorProps) => {
   const [hoveredAgent, setHoveredAgent] = useState<number | null>(null);
-  const [morphPhase, setMorphPhase] = useState(0);
+  const [constellation, setConstellation] = useState(0);
+  const [mousePosition, setMousePosition] = useState({ x: 300, y: 240 });
+  const [idleTimer, setIdleTimer] = useState<NodeJS.Timeout | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
+  // Constellation reconfiguration
   useEffect(() => {
     const interval = setInterval(() => {
-      setMorphPhase(prev => (prev + 1) % 3);
-    }, 8000);
-
+      setConstellation(prev => (prev + 1) % 3);
+    }, 15000);
     return () => clearInterval(interval);
   }, []);
 
+  // Mouse tracking for parallax
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        setMousePosition({
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top,
+        });
+      }
+
+      // Reset idle timer
+      if (idleTimer) clearTimeout(idleTimer);
+      const newTimer = setTimeout(() => {
+        setConstellation(prev => (prev + 1) % 3);
+      }, 15000);
+      setIdleTimer(newTimer);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      if (idleTimer) clearTimeout(idleTimer);
+    };
+  }, [idleTimer]);
+
+  // Responsive breakpoints
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
   const getAgentPosition = (agent: typeof agents[0]) => {
-    const baseRadius = 120;
-    const morphOffset = morphPhase * 20;
+    const baseRadius = isMobile ? 100 : 140;
+    const morphOffset = constellation * 30;
     const radius = baseRadius + (agent.id % 2 === 0 ? morphOffset : -morphOffset);
-    const adjustedAngle = agent.angle + (morphPhase * 10);
+    const adjustedAngle = agent.angle + (constellation * 15);
     const radian = (adjustedAngle * Math.PI) / 180;
     
     return {
@@ -38,179 +108,88 @@ export const AIBlueprintGenerator = ({ className = "" }: AIBlueprintGeneratorPro
     };
   };
 
+  if (isMobile) {
+    return (
+      <div className={`relative w-full h-96 ${className}`} ref={containerRef}>
+        <BackgroundGrid mousePosition={mousePosition} />
+        
+        <div className="absolute inset-0 flex flex-col items-center justify-center space-y-8">
+          {/* Mobile Core */}
+          <div className="relative">
+            <svg width="120" height="120" viewBox="0 0 120 120">
+              <BusinessOSCore 
+                mousePosition={{ x: 60, y: 60 }}
+                isAnyAgentHovered={hoveredAgent !== null}
+              />
+            </svg>
+          </div>
+
+          {/* Mobile Agent Carousel */}
+          <div className="flex space-x-4 overflow-x-auto pb-4 px-4 w-full">
+            {agents.map(agent => (
+              <div
+                key={agent.id}
+                className="flex-shrink-0 text-center"
+                onTouchStart={() => setHoveredAgent(agent.id)}
+                onTouchEnd={() => setHoveredAgent(null)}
+              >
+                <div 
+                  className={`w-16 h-16 rounded-full transition-all duration-300 ${
+                    hoveredAgent === agent.id ? 'scale-110' : 'scale-100'
+                  }`}
+                  style={{
+                    background: `linear-gradient(135deg, ${agent.gradientStart}, ${agent.gradientEnd})`,
+                    boxShadow: `0 0 ${hoveredAgent === agent.id ? '20px' : '10px'} ${agent.gradientStart}40`,
+                  }}
+                />
+                <p className="text-xs mt-2 text-white font-medium">{agent.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <ImpactOverlay />
+      </div>
+    );
+  }
+
   return (
-    <div className={`relative w-80 h-80 ${className}`}>
+    <div className={`relative w-[600px] h-[480px] ${className}`} ref={containerRef}>
+      {/* Layer 1: Background */}
+      <BackgroundGrid mousePosition={mousePosition} />
+      
+      {/* Layer 2 & 3: Main Visualization */}
       <svg
-        width="320"
-        height="320"
-        viewBox="0 0 320 320"
+        width="600"
+        height="480"
+        viewBox="0 0 600 480"
         className="absolute inset-0"
-        style={{ filter: 'drop-shadow(0 0 20px rgba(139, 92, 246, 0.3))' }}
+        style={{ filter: 'drop-shadow(0 0 30px rgba(99, 102, 241, 0.3))' }}
       >
-        {/* Grid Background */}
-        <defs>
-          <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(4, 17, 34, 0.1)" strokeWidth="0.5"/>
-          </pattern>
-          
-          {/* Gradient Definitions */}
-          <linearGradient id="coreGradient" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#8B5CF6" stopOpacity="0.8"/>
-            <stop offset="100%" stopColor="#0EA5E9" stopOpacity="0.4"/>
-          </linearGradient>
-          
-          {agents.map(agent => (
-            <linearGradient key={`gradient-${agent.id}`} id={`agentGradient-${agent.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor={agent.color} stopOpacity="0.8"/>
-              <stop offset="100%" stopColor={agent.color} stopOpacity="0.4"/>
-            </linearGradient>
-          ))}
-          
-          {/* Flow Animation */}
-          <linearGradient id="flowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="transparent"/>
-            <stop offset="50%" stopColor="#8B5CF6" stopOpacity="0.8"/>
-            <stop offset="100%" stopColor="transparent"/>
-            <animateTransform
-              attributeName="gradientTransform"
-              type="translate"
-              values="-100 0;100 0;-100 0"
-              dur="3s"
-              repeatCount="indefinite"
+        {/* Layer 2: Business OS Core */}
+        <BusinessOSCore 
+          mousePosition={mousePosition}
+          isAnyAgentHovered={hoveredAgent !== null}
+        />
+
+        {/* Layer 3: Dynamic AI Agents */}
+        {agents.map(agent => {
+          const position = getAgentPosition(agent);
+          return (
+            <AIAgent
+              key={agent.id}
+              agent={agent}
+              position={position}
+              isHovered={hoveredAgent === agent.id}
+              onHover={setHoveredAgent}
+              constellation={constellation}
             />
-          </linearGradient>
-        </defs>
-
-        {/* Grid Background */}
-        <rect width="100%" height="100%" fill="url(#grid)" opacity="0.3"/>
-
-        {/* Connection Lines */}
-        {agents.map(agent => {
-          const pos = getAgentPosition(agent);
-          const isHovered = hoveredAgent === agent.id;
-          
-          return (
-            <g key={`connection-${agent.id}`}>
-              {/* Base Connection Line */}
-              <line
-                x1="160"
-                y1="160"
-                x2={160 + pos.x}
-                y2={160 + pos.y}
-                stroke={agent.color}
-                strokeWidth={isHovered ? "3" : "1.5"}
-                strokeOpacity={isHovered ? "0.8" : "0.4"}
-                className="transition-all duration-300"
-              />
-              
-              {/* Animated Flow Line */}
-              <line
-                x1="160"
-                y1="160"
-                x2={160 + pos.x}
-                y2={160 + pos.y}
-                stroke="url(#flowGradient)"
-                strokeWidth="2"
-                strokeOpacity="0.6"
-              />
-            </g>
-          );
-        })}
-
-        {/* Central Business OS Core */}
-        <g>
-          <circle
-            cx="160"
-            cy="160"
-            r="24"
-            fill="url(#coreGradient)"
-            className="animate-pulse"
-            style={{ 
-              filter: `drop-shadow(0 0 ${hoveredAgent ? '15px' : '10px'} rgba(139, 92, 246, 0.5))`
-            }}
-          />
-          <circle
-            cx="160"
-            cy="160"
-            r="30"
-            fill="none"
-            stroke="#8B5CF6"
-            strokeWidth="1"
-            strokeOpacity="0.3"
-            className="animate-spin-slow"
-          />
-        </g>
-
-        {/* Agent Nodes */}
-        {agents.map(agent => {
-          const pos = getAgentPosition(agent);
-          const isHovered = hoveredAgent === agent.id;
-          
-          return (
-            <g
-              key={`agent-${agent.id}`}
-              transform={`translate(${160 + pos.x}, ${160 + pos.y})`}
-              className="cursor-pointer transition-all duration-300"
-              onMouseEnter={() => setHoveredAgent(agent.id)}
-              onMouseLeave={() => setHoveredAgent(null)}
-            >
-              <circle
-                r={isHovered ? "18" : "14"}
-                fill={`url(#agentGradient-${agent.id})`}
-                className="transition-all duration-300"
-                style={{ 
-                  filter: `drop-shadow(0 0 ${isHovered ? '12px' : '6px'} ${agent.color}40)`
-                }}
-              />
-              <circle
-                r={isHovered ? "22" : "18"}
-                fill="none"
-                stroke={agent.color}
-                strokeWidth="1"
-                strokeOpacity="0.6"
-                className="animate-pulse"
-              />
-            </g>
           );
         })}
       </svg>
 
-      {/* Agent Labels */}
-      {agents.map(agent => {
-        const pos = getAgentPosition(agent);
-        const isHovered = hoveredAgent === agent.id;
-        
-        return (
-          <div
-            key={`label-${agent.id}`}
-            className={`absolute text-xs font-medium text-white transition-all duration-300 pointer-events-none ${
-              isHovered ? 'opacity-100 scale-110' : 'opacity-80'
-            }`}
-            style={{
-              left: `${160 + pos.x - 30}px`,
-              top: `${160 + pos.y + 25}px`,
-              width: '60px',
-              textAlign: 'center',
-              textShadow: `0 0 10px ${agent.color}`,
-            }}
-          >
-            {agent.label}
-          </div>
-        );
-      })}
-
-      {/* Central Label */}
-      <div 
-        className="absolute text-sm font-bold text-white pointer-events-none"
-        style={{
-          left: '50%',
-          top: '50%',
-          transform: 'translate(-50%, -50%)',
-          textShadow: '0 0 10px #8B5CF6',
-        }}
-      >
-        Business OS
-      </div>
+      {/* Layer 4: Human Impact Overlay */}
+      <ImpactOverlay />
     </div>
   );
 };

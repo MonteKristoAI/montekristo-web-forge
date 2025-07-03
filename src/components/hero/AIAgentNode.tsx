@@ -42,60 +42,16 @@ export const AIAgentNode = ({
         onMouseEnter={() => onHover(agent.id)}
         onMouseLeave={() => onHover(null)}
       >
-        <svg width="56" height="56" viewBox="0 0 56 56">
-          <defs>
-            <radialGradient id={`gradient-${agent.id}`} cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor={agent.color} stopOpacity="0.95"/>
-              <stop offset="70%" stopColor={agent.color} stopOpacity="0.7"/>
-              <stop offset="100%" stopColor={agent.color} stopOpacity="0.3"/>
-            </radialGradient>
-            
-            <filter id={`glow-${agent.id}`} x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
-              <feMerge>
-                <feMergeNode in="coloredBlur"/>
-                <feMergeNode in="SourceGraphic"/>
-              </feMerge>
-            </filter>
-          </defs>
-
-          {/* Outer glow ring - breathing effect */}
-          <circle
-            cx="28"
-            cy="28"
-            r={isHovered ? "25" : "22"}
-            fill="none"
-            stroke={agent.color}
-            strokeWidth="1.5"
-            strokeOpacity={0.4 + Math.sin((pulsePhase + agent.id * 15) * 0.08) * 0.3}
-            className="transition-all duration-500"
-            filter={`url(#glow-${agent.id})`}
-          />
-
-          {/* Main node with enhanced hover effect */}
-          <circle
-            cx="28"
-            cy="28"
-            r={isHovered ? "18" : "15"}
-            fill={`url(#gradient-${agent.id})`}
-            filter={`url(#glow-${agent.id})`}
-            className="transition-all duration-500"
-            style={{
-              opacity: isHovered ? 1 : 0.85,
-              transform: isHovered ? 'scale(1.1)' : 'scale(1)'
-            }}
-          />
-
-          {/* Inner core */}
-          <circle
-            cx="28"
-            cy="28"
-            r="8"
-            fill={agent.color}
-            opacity={0.3 + Math.sin((pulsePhase + agent.id * 20) * 0.06) * 0.2}
-            className="animate-pulse"
-          />
-        </svg>
+        <div
+          className={`w-14 h-14 rounded-full transition-all duration-500 ${
+            isHovered ? 'scale-110' : 'scale-100'
+          }`}
+          style={{
+            background: `radial-gradient(circle, ${agent.color}95, ${agent.color}70, ${agent.color}30)`,
+            boxShadow: `0 0 ${isHovered ? '25' : '15'}px ${agent.color}40, 0 4px 15px rgba(0,0,0,0.1)`,
+            border: `2px solid ${agent.color}60`
+          }}
+        />
       </div>
 
       {/* Premium Agent Label - no overlaps, consistent styling */}

@@ -50,7 +50,7 @@ export const Hero = () => {
           {/* Right: AI Intelligence Cores */}
           <div className="flex justify-center items-center">
             <img 
-              src="/lovable-uploads/f807bc5d-c4d5-4856-b96f-e68c82dae0cd.png"
+              src="/lovable-uploads/d0efcc58-fedd-4c18-949e-398c59975100.png"
               alt="Four luminous AI intelligence cores hover and connect, illustrating each step in the AI transformation protocol: Discovery, Blueprint, Deployment, and Optimisation"
               className="w-[500px] h-[500px] lg:w-[600px] lg:h-[600px] object-contain animate-fade-in hover:scale-105 transition-transform duration-300"
             />

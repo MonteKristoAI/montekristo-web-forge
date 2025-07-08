@@ -12,6 +12,7 @@ export const NodeComponent = ({ node, isHovered, onHover, onClick }: NodeCompone
   const isCenterNode = node.id === 'business-os';
   const radius = isCenterNode ? 45 : 25; // Larger center node
   const scale = isHovered ? 1.2 : 1;
+  const labelScale = isHovered ? 1.05 : 1;
 
   return (
     <g
@@ -30,11 +31,29 @@ export const NodeComponent = ({ node, isHovered, onHover, onClick }: NodeCompone
             <feMergeNode in="SourceGraphic"/>
           </feMerge>
         </filter>
+        <filter id={`text-glow-${node.id}`} x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+          <feMerge> 
+            <feMergeNode in="coloredBlur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
         <radialGradient id={`gradient-${node.id}`} cx="50%" cy="50%" r="50%">
           <stop offset="0%" stopColor={node.color} stopOpacity="0.9"/>
           <stop offset="70%" stopColor={node.color} stopOpacity="0.6"/>
           <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.3"/>
         </radialGradient>
+        <linearGradient id={`text-gradient-${node.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor={node.color} stopOpacity="0.8"/>
+          <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.8"/>
+        </linearGradient>
+        {isCenterNode && (
+          <linearGradient id="center-underline-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.6"/>
+            <stop offset="50%" stopColor={node.color} stopOpacity="0.8"/>
+            <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.6"/>
+          </linearGradient>
+        )}
       </defs>
 
       {/* Outer pulse ring */}
@@ -68,17 +87,47 @@ export const NodeComponent = ({ node, isHovered, onHover, onClick }: NodeCompone
       />
 
       {/* Node label */}
-      <text
-        y={radius + 25}
+      <motion.text
+        y={isCenterNode ? radius + 35 : radius + 25}
         textAnchor="middle"
-        className="text-xs font-medium fill-foreground"
+        className={`font-inter ${isCenterNode ? 'text-lg font-semibold' : 'text-sm font-medium'} fill-foreground`}
         style={{
-          textShadow: `0 0 8px ${node.color}`,
-          opacity: isHovered ? 1 : 0.8
+          fill: '#111111',
+          letterSpacing: '0.02em',
+          textTransform: isCenterNode ? 'none' : 'uppercase',
+          filter: `url(#text-glow-${node.id})`,
+          textShadow: `0 0 12px ${node.color}`,
         }}
+        animate={{ 
+          scale: labelScale,
+          opacity: isHovered ? 1 : 0.85
+        }}
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
       >
         {node.label}
-      </text>
+      </motion.text>
+      
+      {/* Central node underline glow */}
+      {isCenterNode && (
+        <motion.line
+          x1={-35}
+          x2={35}
+          y1={radius + 42}
+          y2={radius + 42}
+          stroke="url(#center-underline-gradient)"
+          strokeWidth="2"
+          strokeLinecap="round"
+          animate={{
+            opacity: [0.4, 0.8, 0.4],
+            strokeWidth: [1.5, 2.5, 1.5]
+          }}
+          transition={{
+            duration: 4,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+      )}
 
       {/* Center node special styling */}
       {isCenterNode && (

@@ -130,8 +130,8 @@ export const BusinessOSGraph = ({ className = "" }: BusinessOSGraphProps) => {
                   className="w-8 h-8 rounded-full mx-auto mb-2"
                   style={{ backgroundColor: node.color }}
                 />
-                <h4 className="font-medium text-sm mb-1">{node.label}</h4>
-                <p className="text-xs text-muted-foreground">{node.impact}</p>
+                <h4 className="font-inter font-semibold text-sm mb-1" style={{ letterSpacing: '0.02em', textTransform: 'uppercase' }}>{node.label}</h4>
+                <p className="font-inter text-xs text-muted-foreground" style={{ lineHeight: '1.4' }}>{node.impact}</p>
               </motion.div>
             ))}
         </div>

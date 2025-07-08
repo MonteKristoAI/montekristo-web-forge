@@ -22,10 +22,10 @@ export const TooltipPanel = ({ tooltip }: TooltipPanelProps) => {
           }}
         >
           <div className="bg-black/80 border border-white/20 rounded-lg p-4 shadow-xl backdrop-blur-sm max-w-xs">
-            <h3 className="font-inter font-semibold text-sm text-white mb-1" style={{ letterSpacing: '0.02em' }}>
+            <h3 className="font-poppins font-semibold text-sm text-white mb-1" style={{ letterSpacing: '0.02em', textTransform: 'uppercase' }}>
               {tooltip.node.label}
             </h3>
-            <p className="font-inter text-xs text-gray-300 leading-relaxed" style={{ lineHeight: '1.4', letterSpacing: '0.01em' }}>
+            <p className="font-poppins text-xs text-gray-300 leading-relaxed" style={{ lineHeight: '1.4', letterSpacing: '0.01em' }}>
               {tooltip.node.description}
             </p>
             {tooltip.node.impact && (

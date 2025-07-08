@@ -32,7 +32,7 @@ export const NodeComponent = ({ node, isHovered, onHover, onClick }: NodeCompone
           </feMerge>
         </filter>
         <filter id={`text-glow-${node.id}`} x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+          <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
           <feMerge> 
             <feMergeNode in="coloredBlur"/>
             <feMergeNode in="SourceGraphic"/>
@@ -44,13 +44,13 @@ export const NodeComponent = ({ node, isHovered, onHover, onClick }: NodeCompone
           <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.3"/>
         </radialGradient>
         <linearGradient id={`text-gradient-${node.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor={node.color} stopOpacity="0.8"/>
-          <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.8"/>
+          <stop offset="0%" stopColor={node.color} stopOpacity="0.9"/>
+          <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.7"/>
         </linearGradient>
         {isCenterNode && (
           <linearGradient id="center-underline-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.6"/>
-            <stop offset="50%" stopColor={node.color} stopOpacity="0.8"/>
+            <stop offset="50%" stopColor={node.color} stopOpacity="0.9"/>
             <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.6"/>
           </linearGradient>
         )}
@@ -86,15 +86,15 @@ export const NodeComponent = ({ node, isHovered, onHover, onClick }: NodeCompone
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
       />
 
-      {/* Node label */}
+      {/* Node label with Poppins */}
       <motion.text
         y={isCenterNode ? radius + 35 : radius + 25}
         textAnchor="middle"
-        className={`font-inter ${isCenterNode ? 'text-lg font-semibold' : 'text-sm font-medium'} fill-foreground`}
+        className={`font-poppins ${isCenterNode ? 'text-lg font-bold' : 'text-sm font-semibold'} fill-foreground`}
         style={{
           fill: '#111111',
           letterSpacing: '0.02em',
-          textTransform: isCenterNode ? 'none' : 'uppercase',
+          textTransform: 'uppercase',
           filter: `url(#text-glow-${node.id})`,
           textShadow: `0 0 12px ${node.color}`,
         }}
@@ -107,25 +107,18 @@ export const NodeComponent = ({ node, isHovered, onHover, onClick }: NodeCompone
         {node.label}
       </motion.text>
       
-      {/* Central node underline glow */}
+      {/* Central node synchronized underline glow */}
       {isCenterNode && (
         <motion.line
-          x1={-35}
-          x2={35}
+          id="center-label-glow"
+          x1={-40}
+          x2={40}
           y1={radius + 42}
           y2={radius + 42}
           stroke="url(#center-underline-gradient)"
           strokeWidth="2"
           strokeLinecap="round"
-          animate={{
-            opacity: [0.4, 0.8, 0.4],
-            strokeWidth: [1.5, 2.5, 1.5]
-          }}
-          transition={{
-            duration: 4,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
+          style={{ opacity: 0.7 }}
         />
       )}
 

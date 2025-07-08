@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
+import { gsap } from 'gsap';
 import { GraphData, NodeData, LinkData } from './types';
 
 interface ForceSimulationProps {
@@ -20,11 +21,14 @@ export const ForceSimulation = ({
   const simulationRef = useRef<d3.Simulation<NodeData, LinkData> | null>(null);
 
   useEffect(() => {
-    // Create force simulation
+    // Create force simulation with custom link distances
     const simulation = d3.forceSimulation<NodeData>(data.nodes)
       .force('link', d3.forceLink<NodeData, LinkData>(data.links)
         .id((d: NodeData) => d.id)
-        .distance(140)
+        .distance((d, i) => {
+          // Variable distances based on index for visual variety
+          return i % 2 === 0 ? 180 : 120;
+        })
         .strength(0.6))
       .force('charge', d3.forceManyBody()
         .strength(-400)
@@ -41,24 +45,25 @@ export const ForceSimulation = ({
       centerNode.fy = height / 2;
     }
 
-    // Store original positions for rotation
-    const originalPositions = new Map();
-    data.nodes.forEach(node => {
-      if (node.id !== 'business-os') {
-        originalPositions.set(node.id, { x: node.x, y: node.y });
-      }
-    });
-
-    // Idle animation variables
-    let baseRotationAngle = 0;
-    let animationStartTime = 0;
+    // GSAP-controlled rotation timeline
+    let rotationTimeline: gsap.core.Timeline | null = null;
     let isUserInteracting = false;
-    let animationId: number;
-
+    
     // Track user interactions
-    const handleInteractionStart = () => { isUserInteracting = true; };
+    const handleInteractionStart = () => { 
+      isUserInteracting = true;
+      if (rotationTimeline) {
+        rotationTimeline.pause();
+      }
+    };
+    
     const handleInteractionEnd = () => { 
-      setTimeout(() => { isUserInteracting = false; }, 500); // Resume after 500ms
+      setTimeout(() => { 
+        isUserInteracting = false;
+        if (rotationTimeline && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          rotationTimeline.resume();
+        }
+      }, 500);
     };
 
     // Add interaction listeners
@@ -69,53 +74,39 @@ export const ForceSimulation = ({
       graphElement.addEventListener('click', handleInteractionStart);
     }
 
-    const idleAnimate = (currentTime: number) => {
-      if (!animationStartTime) animationStartTime = currentTime;
+    // Create GSAP rotation timeline
+    const createRotationTimeline = () => {
+      const svgGroup = document.querySelector('#business-os-graph svg g');
+      const centerLabel = document.querySelector('#center-label-glow');
       
-      const elapsed = currentTime - animationStartTime;
-      const cycleTime = 5000; // 5 seconds total cycle
-      const rotationTime = 500; // 0.5 seconds rotation
-      const holdTime = 4500; // 4.5 seconds hold
-      
-      const cyclePosition = elapsed % cycleTime;
-      
-      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 
-          !isUserInteracting && 
-          cyclePosition <= rotationTime) {
+      if (svgGroup && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        rotationTimeline = gsap.timeline({ repeat: -1 });
         
-        // During rotation phase (first 0.5 seconds)
-        const rotationProgress = cyclePosition / rotationTime;
-        const targetAngle = baseRotationAngle + (Math.PI / 6) * rotationProgress; // 30 degrees
-        
-        data.nodes.forEach(node => {
-          if (node.id !== 'business-os' && node.x && node.y) {
-            const centerX = width / 2;
-            const centerY = height / 2;
-            const radius = Math.sqrt(Math.pow(node.x - centerX, 2) + Math.pow(node.y - centerY, 2));
-            const currentAngle = Math.atan2(node.y - centerY, node.x - centerX);
-            
-            // Smooth rotation using easing
-            const easedProgress = 1 - Math.pow(1 - rotationProgress, 3); // Ease out cubic
-            const newAngle = currentAngle + (Math.PI / 6) * easedProgress / 60; // Incremental
-            
-            node.x = centerX + radius * Math.cos(newAngle);
-            node.y = centerY + radius * Math.sin(newAngle);
-          }
-        });
-        
-        onNodeUpdate([...data.nodes]);
-        onLinkUpdate([...data.links]);
-      } else if (cyclePosition > rotationTime && cyclePosition <= cycleTime) {
-        // During hold phase - update base angle for next cycle
-        if (cyclePosition - rotationTime < 16) { // Only update once at start of hold
-          baseRotationAngle += Math.PI / 6; // Add 30 degrees for next cycle
-        }
+        rotationTimeline
+          .to(svgGroup, {
+            rotation: "+=30",
+            duration: 0.5,
+            ease: "power2.out",
+            transformOrigin: "center center"
+          })
+          .to(centerLabel, {
+            opacity: 1,
+            scale: 1.05,
+            duration: 0.5,
+            ease: "power2.out"
+          }, "<")
+          .to(centerLabel, {
+            opacity: 0.7,
+            scale: 1,
+            duration: 0.2,
+            ease: "power2.in"
+          }, ">-0.2")
+          .to({}, { duration: 4.3 }); // Hold for 4.3s (total 4.5s pause)
       }
-      
-      animationId = requestAnimationFrame(idleAnimate);
     };
-    
-    animationId = requestAnimationFrame(idleAnimate);
+
+    // Initialize rotation after a short delay to ensure DOM is ready
+    setTimeout(createRotationTimeline, 100);
 
     // Update positions on tick
     simulation.on('tick', () => {
@@ -127,7 +118,9 @@ export const ForceSimulation = ({
 
     return () => {
       simulation.stop();
-      cancelAnimationFrame(animationId);
+      if (rotationTimeline) {
+        rotationTimeline.kill();
+      }
       if (graphElement) {
         graphElement.removeEventListener('mouseenter', handleInteractionStart);
         graphElement.removeEventListener('mouseleave', handleInteractionEnd);

@@ -1,9 +1,41 @@
 
 import { Button } from "@/components/ui/button";
+import { useEffect, useRef, useState } from "react";
 
 export const Hero = () => {
+  const heroRef = useRef<HTMLElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !isVisible) {
+          setIsVisible(true);
+        }
+      },
+      {
+        threshold: 0.3, // Trigger when 30% of the hero section is visible
+        rootMargin: '0px 0px -10% 0px'
+      }
+    );
+
+    if (heroRef.current) {
+      observer.observe(heroRef.current);
+    }
+
+    return () => {
+      if (heroRef.current) {
+        observer.unobserve(heroRef.current);
+      }
+    };
+  }, [isVisible]);
+
   return (
-    <section id="hero" className="min-h-screen flex items-center relative overflow-hidden">
+    <section 
+      ref={heroRef}
+      id="hero" 
+      className="min-h-screen flex items-center relative overflow-hidden"
+    >
       {/* Grid background */}
       <div className="absolute inset-0 opacity-8">
         <div className="w-full h-full" style={{
@@ -18,7 +50,11 @@ export const Hero = () => {
       <div className="container mx-auto px-4 max-w-7xl relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left: Copy */}
-          <div className="space-y-8 text-center lg:text-left">
+          <div className={`space-y-8 text-center lg:text-left transition-all duration-800 ease-out ${
+            isVisible 
+              ? 'opacity-100 translate-x-0 translate-y-0' 
+              : 'opacity-0 -translate-x-16 translate-y-4'
+          }`}>
             <h1 className="text-6xl lg:text-7xl font-bold text-[#041122] leading-tight">
               Deploy AI Agents That Do the Work of{" "}
               <span className="text-[#FF5C5C]">5 Teams</span>
@@ -49,11 +85,18 @@ export const Hero = () => {
           
           {/* Right: AI Intelligence Cores */}
           <div className="flex justify-center items-center">
-            <div className="ai-cores-float animate-float-subtle">
+            <div className={`ai-cores-float ${isVisible ? 'animate-float-subtle' : ''}`}>
               <img 
                 src="/lovable-uploads/30c29c54-fbb9-41ee-ab6e-0fe4617eb5e6.png"
                 alt="Four luminous AI intelligence cores hover and connect, illustrating each step in the AI transformation protocol: Discovery, Blueprint, Deployment, and Optimisation"
-                className="w-full max-w-[450px] sm:max-w-[500px] lg:max-w-[550px] h-auto object-contain ai-cores-image ai-cores-entrance animate-slide-up-from-left"
+                className={`w-full max-w-[450px] sm:max-w-[500px] lg:max-w-[550px] h-auto object-contain ai-cores-image transition-all duration-800 ease-out ${
+                  isVisible 
+                    ? 'opacity-100 translate-x-0 translate-y-0' 
+                    : 'opacity-0 -translate-x-16 translate-y-4'
+                }`}
+                style={{
+                  transitionDelay: isVisible ? '0.2s' : '0s'
+                }}
               />
             </div>
           </div>

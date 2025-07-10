@@ -8,25 +8,21 @@ import { Results } from "@/components/Results";
 import { FAQ } from "@/components/FAQ";
 import { BlogTeaser } from "@/components/BlogTeaser";
 import { ContactSection } from "@/components/ContactSection";
-import Header from "@/components/Header";
-import MonteKristoFooter from "@/components/MonteKristoFooter";
+import { Footer } from "@/components/Footer";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-montekristo-dark">
-      <Header />
-      <main className="pt-16 lg:pt-20">
-        <Hero />
-        <WhySection />
-        <AgentCatalog />
-        <Framework />
-        <UseCases />
-        <Results />
-        <FAQ />
-        <BlogTeaser />
-        <ContactSection />
-      </main>
-      <MonteKristoFooter />
+    <div className="min-h-screen bg-[#FAF8F4]">
+      <Hero />
+      <WhySection />
+      <AgentCatalog />
+      <Framework />
+      <UseCases />
+      <Results />
+      <FAQ />
+      <BlogTeaser />
+      <ContactSection />
+      <Footer />
     </div>
   );
 };

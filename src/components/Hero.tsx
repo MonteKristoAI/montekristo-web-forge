@@ -14,7 +14,7 @@ export const Hero = () => {
         }
       },
       {
-        threshold: 0.3, // Trigger when 30% of the hero section is visible
+        threshold: 0.3,
         rootMargin: '0px 0px -10% 0px'
       }
     );
@@ -33,8 +33,7 @@ export const Hero = () => {
   return (
     <section 
       ref={heroRef}
-      id="hero" 
-      className="min-h-screen flex items-center relative overflow-hidden"
+      className="min-h-screen flex items-center relative overflow-hidden bg-[#FAF8F4] pt-16"
     >
       {/* Grid background */}
       <div className="absolute inset-0 opacity-8">
@@ -89,7 +88,7 @@ export const Hero = () => {
               <img 
                 src="/lovable-uploads/30c29c54-fbb9-41ee-ab6e-0fe4617eb5e6.png"
                 alt="Four luminous AI intelligence cores hover and connect, illustrating each step in the AI transformation protocol: Discovery, Blueprint, Deployment, and Optimisation"
-                className={`w-full max-w-[450px] sm:max-w-[500px] lg:max-w-[550px] h-auto object-contain ai-cores-image transition-all duration-800 ease-out ${
+                className={`w-full max-w-[350px] sm:max-w-[400px] lg:max-w-[450px] h-auto object-contain ai-cores-image transition-all duration-800 ease-out ${
                   isVisible 
                     ? 'opacity-100 translate-x-0 translate-y-0' 
                     : 'opacity-0 -translate-x-16 translate-y-4'

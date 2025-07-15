@@ -18,6 +18,7 @@ const Header = () => {
     { name: 'Use Cases', href: 'use-cases', isSection: true },
     { name: 'AI Agents', href: 'agents', isSection: true },
     { name: 'Protocol', href: 'protocol', isSection: true },
+    { name: 'Questions', href: 'faq', isSection: true },
     { name: 'Blog', href: '/blog', isSection: false }
   ];
 

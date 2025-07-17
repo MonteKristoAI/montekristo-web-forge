@@ -81,7 +81,7 @@ export const Hero = () => {
           <div className="flex justify-center items-center">
             <div className={`ai-cores-float ${isVisible ? 'animate-float-subtle' : ''}`}>
               <img 
-                src="/lovable-uploads/30c29c54-fbb9-41ee-ab6e-0fe4617eb5e6.png"
+                src="https://hfpvnsbiewudpqbtlvte.supabase.co/storage/v1/object/public/montekristo.website//cubes-master.png"
                 alt="Four luminous AI intelligence cores hover and connect, illustrating each step in the AI transformation protocol: Discovery, Blueprint, Deployment, and Optimisation"
                 className={`w-full max-w-[350px] sm:max-w-[400px] lg:max-w-[450px] h-auto object-contain ai-cores-image transition-all duration-800 ease-out ${
                   isVisible 

@@ -48,8 +48,8 @@ export const BlogTeaser = () => {
                   />
                 ) : index === 1 ? (
                   <img 
-                    src="https://images.unsplash.com/photo-1500673922987-e212871f6ac1?auto=format&fit=crop&w=800&q=80"
-                    alt="Colorful lights representing AI workflow automation"
+                    src="/src/assets/workflow-hero.jpg"
+                    alt="Colorful abstract representation of AI automation workflows"
                     className="w-full h-48 object-cover rounded-lg mb-6"
                   />
                 ) : (

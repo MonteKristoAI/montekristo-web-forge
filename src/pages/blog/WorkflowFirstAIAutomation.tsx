@@ -6,8 +6,8 @@ import { Separator } from "@/components/ui/separator";
 import { useNavigate } from "react-router-dom";
 import { useSmoothScroll } from "@/hooks/useSmoothScroll";
 
-const heroImageUrl = "https://images.unsplash.com/photo-1500673922987-e212871f6ac1?auto=format&fit=crop&w=1920&q=80";
-const workflowImageUrl = "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1920&q=80";
+import workflowHero from "@/assets/workflow-hero.jpg";
+const workflowImageUrl = "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?auto=format&fit=crop&w=1920&q=80";
 
 const WorkflowFirstAIAutomation = () => {
   const navigate = useNavigate();
@@ -50,8 +50,8 @@ const WorkflowFirstAIAutomation = () => {
           {/* Hero Image */}
           <div className="mb-12">
             <img 
-              src={heroImageUrl}
-              alt="Colorful lights representing AI workflow automation"
+              src={workflowHero}
+              alt="Colorful abstract representation of AI automation workflows"
               className="w-full h-64 lg:h-80 object-cover rounded-lg shadow-lg"
             />
           </div>
@@ -302,14 +302,6 @@ const WorkflowFirstAIAutomation = () => {
                   Get Started Today
                 </Button>
                 <br />
-                <Button 
-                  variant="outline" 
-                  size="lg" 
-                  className="border-white text-white hover:bg-white/10"
-                  onClick={handleGetStarted}
-                >
-                  Download Workflow Mapping Canvas →
-                </Button>
               </div>
             </div>
 

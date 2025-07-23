@@ -52,7 +52,7 @@ const WorkflowFirstAIAutomation = () => {
             <img 
               src={workflowHero}
               alt="Colorful abstract representation of AI automation workflows"
-              className="w-full h-64 lg:h-80 object-cover rounded-lg shadow-lg"
+              className="w-full h-64 lg:h-80 object-cover object-top rounded-lg shadow-lg"
             />
           </div>
 

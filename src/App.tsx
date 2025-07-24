@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import Blog from "./pages/Blog";
 import AdaptiveLearning from "./pages/blog/AdaptiveLearning";
 import WorkflowFirstAIAutomation from "./pages/blog/WorkflowFirstAIAutomation";
+import AIAgentsPracticalPlaybook from "./pages/blog/AIAgentsPracticalPlaybook";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/from-checkboxes-to-growth-engines" element={<AdaptiveLearning />} />
           <Route path="/blog/workflow-first-ai-automation" element={<WorkflowFirstAIAutomation />} />
+          <Route path="/blog/ai-agents-practical-playbook" element={<AIAgentsPracticalPlaybook />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

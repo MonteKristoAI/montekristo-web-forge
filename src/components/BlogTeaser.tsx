@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import workflowHero from "@/assets/workflow-hero.jpg";
+import aiAgentsHero from "@/assets/ai-agents-hero.png";
 
 const blogPosts = [
   {
@@ -16,8 +17,9 @@ const blogPosts = [
     slug: "workflow-first-ai-automation"
   },
   {
-    title: "The Complete Guide to AI-Powered Sales Workflows",
-    excerpt: "Transform your sales process with intelligent automation"
+    title: "AI Agents Without the Hype: A Practical Playbook for 2025 Growth",
+    excerpt: "Cut through the 2025 AI‑agent hype—see what autonomous agents can and can't do for real‑world growth.",
+    slug: "ai-agents-practical-playbook"
   }
 ];
 
@@ -37,8 +39,8 @@ export const BlogTeaser = () => {
           {blogPosts.map((post, index) => (
             <Card 
               key={index} 
-              className={`hover:shadow-xl transition-all duration-300 border-0 shadow-lg ${index < 2 ? 'cursor-pointer' : ''}`}
-              onClick={post.slug ? () => navigate(`/blog/${post.slug}`) : undefined}
+              className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg cursor-pointer"
+              onClick={() => navigate(`/blog/${post.slug}`)}
             >
               <CardContent className="p-8">
                 {index === 0 ? (
@@ -54,7 +56,11 @@ export const BlogTeaser = () => {
                     className="w-full h-48 object-cover rounded-lg mb-6"
                   />
                 ) : (
-                  <div className="w-full h-48 bg-gradient-to-br from-[#8B5CF6] to-[#0EA5E9] rounded-lg mb-6" />
+                  <img 
+                    src={aiAgentsHero}
+                    alt="Colorful illustration of diverse professionals collaborating with AI agents"
+                    className="w-full h-48 object-cover rounded-lg mb-6"
+                  />
                 )}
                 <h3 className="text-xl font-bold text-[#041122] mb-4 leading-tight">
                   {post.title}

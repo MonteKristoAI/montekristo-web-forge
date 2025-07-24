@@ -2,6 +2,7 @@ import Header from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useEffect } from "react";
 import workflowHero from "@/assets/workflow-hero.jpg";
+import aiAgentsHero from "@/assets/ai-agents-hero.png";
 
 const Blog = () => {
   useEffect(() => {
@@ -61,18 +62,18 @@ const Blog = () => {
               </div>
             </article>
             
-            <article className="border border-gray-200 rounded-lg overflow-hidden">
-              <div className="h-48 bg-gradient-to-br from-orange-500 to-red-600"></div>
+            <article className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer" onClick={() => window.location.href = '/blog/ai-agents-practical-playbook'}>
+              <img 
+                src={aiAgentsHero}
+                alt="Colorful illustration of diverse professionals collaborating with AI agents"
+                className="w-full h-48 object-cover"
+              />
               <div className="p-6">
-                <h2 className="text-xl font-bold text-[#041122] mb-3">
-                  Best Practices for AI Agent Integration
-                </h2>
-                <p className="text-[#1D1F28]/70 mb-4">
-                  Essential guidelines for successfully integrating AI agents into existing business workflows and systems.
+                <h2 className="text-xl font-bold text-[#041122] mb-3">AI Agents Without the Hype: A Practical Playbook for 2025 Growth</h2>
+                <p className="text-[#1D1F28]/70 mb-4 leading-relaxed">
+                  Cut through the 2025 AI‑agent hype—see what autonomous agents can and can't do for real‑world growth.
                 </p>
-                <div className="text-sm text-[#1D1F28]/50">
-                  December 5, 2024
-                </div>
+                <span className="text-sm text-[#1D1F28]/50">≈ 10 min read</span>
               </div>
             </article>
           </div>

@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
@@ -18,7 +17,7 @@ export const BlogTeaser = () => {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-          {blogPosts.map((post, index) => (
+          {blogPosts.map((post) => (
             <Card 
               key={post.id} 
               className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg cursor-pointer"

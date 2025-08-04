@@ -223,7 +223,7 @@ const AIAgentsPracticalPlaybook = () => {
                   <tr>
                     <td className="border border-gray-300 px-4 py-3"><strong>Shadow Mode</strong></td>
                     <td className="border border-gray-300 px-4 py-3">Run agent outputs side‑by‑side with human baseline</td>
-                    <td className="border border-gray-300 px-4 py-3">Ben AI sandbox</td>
+                    <td className="border border-gray-300 px-4 py-3">Amazon SageMaker</td>
                   </tr>
                   <tr className="bg-gray-50">
                     <td className="border border-gray-300 px-4 py-3"><strong>PII Redaction</strong></td>

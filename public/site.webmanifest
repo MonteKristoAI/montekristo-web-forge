@@ -1,0 +1,32 @@
+{
+  "name": "MONTEKRISTO AI",
+  "short_name": "MONTEKRISTO",
+  "description": "AI Transformation Partner for Scalable SaaS Growth",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    },
+    {
+      "src": "/favicon-32.png",
+      "type": "image/png",
+      "sizes": "32x32"
+    },
+    {
+      "src": "/favicon-16.png",
+      "type": "image/png",
+      "sizes": "16x16"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "type": "image/png",
+      "sizes": "180x180"
+    }
+  ],
+  "theme_color": "#0E121A",
+  "background_color": "#0E121A",
+  "display": "standalone",
+  "start_url": "/",
+  "scope": "/"
+}

@@ -23,21 +23,28 @@ import {
 const contactFormSchema = z.object({
   name: z.string()
     .min(2, "Name must be at least 2 characters")
-    .max(100, "Name must be less than 100 characters")
-    .regex(/^[a-zA-Z\s\-'\.]+$/, "Name contains invalid characters"),
+    .max(120, "Name must be less than 120 characters")
+    .regex(/^[a-zA-Z\s\-'\.À-ÿ]+$/, "Name contains invalid characters"),
   email: z.string()
     .email("Please enter a valid email address")
     .max(254, "Email must be less than 254 characters"),
   company: z.string()
-    .min(1, "Company name is required")
-    .max(100, "Company name must be less than 100 characters")
+    .min(2, "Company name must be at least 2 characters")
+    .max(200, "Company name must be less than 200 characters")
     .regex(/^[a-zA-Z0-9\s\-&'\.]+$/, "Company name contains invalid characters"),
-  bottleneck: z.enum(["outreach", "crm", "content", "sales", "other"]).refine(val => val !== undefined, {
+  bottleneck: z.enum([
+    "Lead Outreach & Qualification",
+    "CRM Management & Updates", 
+    "Content Creation & Distribution",
+    "Sales Process Optimization",
+    "Other"
+  ]).refine(val => val !== undefined, {
     message: "Please select a bottleneck"
   }),
   notes: z.string()
-    .max(1000, "Notes must be less than 1000 characters")
-    .optional()
+    .max(2000, "Notes must be less than 2000 characters")
+    .optional(),
+  website: z.string().optional() // Honeypot field
 });
 
 type ContactFormData = z.infer<typeof contactFormSchema>;
@@ -63,7 +70,7 @@ export const ContactSection = () => {
     setIsSubmitting(true);
     
     try {
-      // Advanced rate limiting
+      // Advanced rate limiting (client-side check)
       if (!checkRateLimit('contact_form', 3, 300000)) { // 3 attempts per 5 minutes
         toast.error("Too many attempts. Please wait before submitting again.");
         return;
@@ -75,40 +82,57 @@ export const ContactSection = () => {
         return;
       }
       
-      // Get CSRF token for security
-      const csrfToken = getCSRFToken();
-      if (!csrfToken) {
-        toast.error("Security token missing. Please refresh the page.");
-        return;
-      }
-      
-      // Sanitize all input data
-      const sanitizedData = {
-        name: sanitizeInput(data.name),
-        email: sanitizeInput(data.email.toLowerCase()),
-        company: sanitizeInput(data.company),
+      // Prepare submission data with honeypot
+      const submissionData = {
+        name: data.name.trim(),
+        email: data.email.trim().toLowerCase(),
+        company: data.company.trim(),
         bottleneck: data.bottleneck,
-        notes: data.notes ? sanitizeInput(data.notes) : "",
-        csrfToken,
-        timestamp: Date.now(),
-        userAgent: navigator.userAgent.substring(0, 200) // Limited for privacy
+        notes: data.notes?.trim() || "",
+        website: "" // Honeypot field - always empty for real users
       };
 
-      // Validate sanitized data isn't empty
-      if (!sanitizedData.name || !sanitizedData.email || !sanitizedData.company) {
-        toast.error("Please fill in all required fields with valid data.");
+      // Validate required fields
+      if (!submissionData.name || !submissionData.email || !submissionData.company || !submissionData.bottleneck) {
+        toast.error("Please fill in all required fields.");
         return;
       }
       
-      // TODO: Replace with secure backend submission to Supabase
-      console.log("Secure form submission:", sanitizedData);
+      // Submit to Supabase Edge Function
+      const response = await fetch(
+        `https://kulcfydqylhvufevlcra.supabase.co/functions/v1/form-submit`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(submissionData)
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok || !result.ok) {
+        throw new Error(result.error || 'Form submission failed');
+      }
       
-      toast.success("Thank you! We'll be in touch within 24 hours.");
+      toast.success("Thanks—your request is in!");
       form.reset();
       
     } catch (error) {
       console.error("Form submission error:", error);
-      toast.error("Something went wrong. Please try again.");
+      
+      if (error instanceof Error) {
+        if (error.message.includes('rate limit') || error.message.includes('Too many')) {
+          toast.error("Too many requests. Please try again later.");
+        } else if (error.message.includes('Invalid') || error.message.includes('validation')) {
+          toast.error("Please check your information and try again.");
+        } else {
+          toast.error("Something went wrong. Please try again.");
+        }
+      } else {
+        toast.error("Something went wrong. Please try again.");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -196,11 +220,11 @@ export const ContactSection = () => {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="outreach">Lead Outreach & Qualification</SelectItem>
-                          <SelectItem value="crm">CRM Management & Updates</SelectItem>
-                          <SelectItem value="content">Content Creation & Distribution</SelectItem>
-                          <SelectItem value="sales">Sales Process Optimization</SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
+                          <SelectItem value="Lead Outreach & Qualification">Lead Outreach & Qualification</SelectItem>
+                          <SelectItem value="CRM Management & Updates">CRM Management & Updates</SelectItem>
+                          <SelectItem value="Content Creation & Distribution">Content Creation & Distribution</SelectItem>
+                          <SelectItem value="Sales Process Optimization">Sales Process Optimization</SelectItem>
+                          <SelectItem value="Other">Other</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -224,17 +248,35 @@ export const ContactSection = () => {
                       <FormMessage />
                     </FormItem>
                   )}
-                />
-                
-                <Button 
-                  type="submit" 
-                  size="lg" 
-                  disabled={isSubmitting}
-                  className="w-full bg-[#FF5C5C] hover:bg-[#FF5C5C]/90 text-white py-4 text-lg font-semibold transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
-                  data-event="cta-click"
-                >
-                  {isSubmitting ? "Submitting..." : "Book AI Strategy Session"}
-                </Button>
+                 />
+                 
+                 {/* Honeypot field - hidden from users */}
+                 <FormField
+                   control={form.control}
+                   name="website"
+                   render={({ field }) => (
+                     <FormItem className="hidden">
+                       <FormLabel>Website</FormLabel>
+                       <FormControl>
+                         <Input 
+                           {...field}
+                           tabIndex={-1}
+                           autoComplete="off"
+                         />
+                       </FormControl>
+                     </FormItem>
+                   )}
+                 />
+                 
+                 <Button 
+                   type="submit" 
+                   size="lg" 
+                   disabled={isSubmitting}
+                   className="w-full bg-[#FF5C5C] hover:bg-[#FF5C5C]/90 text-white py-4 text-lg font-semibold transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
+                   data-event="cta-click"
+                 >
+                   {isSubmitting ? "Submitting..." : "Book AI Strategy Session"}
+                 </Button>
               </form>
             </Form>
           </CardContent>

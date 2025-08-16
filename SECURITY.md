@@ -29,8 +29,14 @@
 ### 3. Security Headers
 - **X-Content-Type-Options**: `nosniff` - Prevents MIME type sniffing
 - **X-Frame-Options**: `DENY` - Prevents clickjacking attacks
-- **X-XSS-Protection**: `1; mode=block` - Enables XSS filtering
 - **Referrer Policy**: `strict-origin-when-cross-origin` - Controls referrer information
+
+**Note**: X-XSS-Protection header has been removed as it's deprecated and can introduce vulnerabilities in legacy browsers.
+
+**Production Deployment**: These headers are currently set via HTML meta tags for development. In production, configure these headers at the server/CDN level:
+- Content-Security-Policy (with frame-ancestors directive)
+- X-Content-Type-Options: nosniff
+- Referrer-Policy: strict-origin-when-cross-origin
 
 ### 4. Runtime Security Monitoring
 - **XSS Detection**: Real-time monitoring for suspicious script injection

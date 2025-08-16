@@ -1,7 +1,15 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 
+// CORS headers for web app requests - restrict to known origins
+const ALLOWED_ORIGINS = [
+  'https://montekristoai.com',
+  'https://www.montekristoai.com',
+  // Add your Lovable preview domain when deploying
+  /^https:\/\/.*\.lovableproject\.com$/,
+]
+
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': '',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
@@ -32,15 +40,24 @@ interface FormSubmission {
   website?: string // Honeypot field
 }
 
+// Extract client IP for rate limiting - prioritize trusted sources
 function getClientIP(request: Request): string {
-  const forwarded = request.headers.get('x-forwarded-for')
-  const realIP = request.headers.get('x-real-ip')
+  // Prefer Cloudflare's connecting IP (most trusted)
   const cfConnecting = request.headers.get('cf-connecting-ip')
+  if (cfConnecting) return cfConnecting
   
-  return forwarded?.split(',')[0]?.trim() || 
-         realIP || 
-         cfConnecting || 
-         'unknown'
+  // Fall back to X-Real-IP (nginx/proxy)
+  const realIP = request.headers.get('x-real-ip')
+  if (realIP) return realIP
+  
+  // Last resort: parse X-Forwarded-For (less reliable)
+  const forwarded = request.headers.get('x-forwarded-for')
+  if (forwarded) {
+    // Take the first IP, but be aware this can be spoofed
+    return forwarded.split(',')[0].trim()
+  }
+  
+  return 'unknown'
 }
 
 function checkRateLimit(ip: string): boolean {
@@ -227,24 +244,64 @@ async function triggerN8NWebhook(data: FormSubmission, airtableRecordId: string)
   }
 }
 
+// Check origin for security
+function checkOrigin(request: Request): boolean {
+  const origin = request.headers.get('origin')
+  const referer = request.headers.get('referer')
+  
+  if (!origin && !referer) return false
+  
+  const checkURL = origin || new URL(referer!).origin
+  
+  return ALLOWED_ORIGINS.some(allowed => {
+    if (typeof allowed === 'string') {
+      return allowed === checkURL
+    }
+    return allowed.test(checkURL)
+  })
+}
+
 serve(async (req) => {
+  const timestamp = new Date().toISOString()
+  const method = req.method
+  const ip = getClientIP(req)
+  
+  console.log(`${timestamp} - ${method} request from ${ip}`)
+
+  // Set CORS origin based on request origin
+  const origin = req.headers.get('origin')
+  if (origin && ALLOWED_ORIGINS.some(allowed => 
+    typeof allowed === 'string' ? allowed === origin : allowed.test(origin)
+  )) {
+    corsHeaders['Access-Control-Allow-Origin'] = origin
+  }
+
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
   
   if (req.method !== 'POST') {
+    console.log(`Method not allowed: ${method}`)
     return new Response(
       JSON.stringify({ ok: false, error: 'Method not allowed' }),
       { status: 405, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
+
+  // Check origin for additional security
+  if (!checkOrigin(req)) {
+    console.log(`Blocked request from unauthorized origin: ${origin || 'none'}`)
+    return new Response('Forbidden', { 
+      status: 403, 
+      headers: corsHeaders 
+    })
+  }
   
   try {
     // Rate limiting
-    const clientIP = getClientIP(req)
-    if (!checkRateLimit(clientIP)) {
-      console.log(`Rate limit exceeded for IP: ${clientIP}`)
+    if (!checkRateLimit(ip)) {
+      console.log(`Rate limit exceeded for IP: ${ip}`)
       return new Response(
         JSON.stringify({ ok: false, error: 'Too many requests. Please try again later.' }),
         { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

@@ -52,9 +52,6 @@ type ContactFormData = z.infer<typeof contactFormSchema>;
 export const ContactSection = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    initializeCSRF();
-  }, []);
   
   const form = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),

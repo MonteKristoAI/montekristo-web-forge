@@ -171,8 +171,8 @@ async function createAirtableRecord(data: FormSubmission): Promise<{ success: bo
         "Work Email": sanitizeInput(data.email.toLowerCase()),
         "Company": sanitizeInput(data.company),
         "Bottleneck": data.bottleneck,
-        "Notes": data.notes ? sanitizeInput(data.notes) : "",
-        "Submitted At": new Date().toISOString()
+        "Notes": data.notes ? sanitizeInput(data.notes) : ""
+        // Removed "Submitted At" field - causing Airtable 422 error
       }
     }]
   }
@@ -200,7 +200,7 @@ async function createAirtableRecord(data: FormSubmission): Promise<{ success: bo
         console.error(`Airtable API error (${response.status}):`, errorText)
         
         if (response.status === 422) {
-          return { success: false, error: 'Invalid form data. Please check your selections.' }
+          return { success: false, error: 'Please check your information and try again.' }
         }
         
         return { success: false, error: 'Failed to save form submission' }
@@ -355,9 +355,11 @@ serve(async (req) => {
     // Create Airtable record
     const airtableResult = await createAirtableRecord(formData)
     if (!airtableResult.success) {
+      // Return 400 for client errors (422 from Airtable), 500 for server errors
+      const statusCode = airtableResult.error?.includes('check your information') ? 400 : 500
       return new Response(
         JSON.stringify({ ok: false, error: airtableResult.error }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: statusCode, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
     

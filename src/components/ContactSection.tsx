@@ -107,6 +107,7 @@ export const ContactSection = () => {
       const result = await response.json();
 
       if (!response.ok || !result.ok) {
+        // Use server error message if available, otherwise generic message
         throw new Error(result.error || 'Form submission failed');
       }
       
@@ -117,13 +118,8 @@ export const ContactSection = () => {
       console.error("Form submission error:", error);
       
       if (error instanceof Error) {
-        if (error.message.includes('rate limit') || error.message.includes('Too many')) {
-          toast.error("Too many requests. Please try again later.");
-        } else if (error.message.includes('Invalid') || error.message.includes('validation')) {
-          toast.error("Please check your information and try again.");
-        } else {
-          toast.error("Something went wrong. Please try again.");
-        }
+        // Display the specific server error message or fallback to generic ones
+        toast.error(error.message);
       } else {
         toast.error("Something went wrong. Please try again.");
       }

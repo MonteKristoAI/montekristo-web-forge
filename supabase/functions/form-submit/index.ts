@@ -4,7 +4,9 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 const ALLOWED_ORIGINS = [
   'https://montekristoai.com',
   'https://www.montekristoai.com',
-  // Add your Lovable preview domain when deploying
+  'https://montekristobelgrade.com',
+  'https://www.montekristobelgrade.com',
+  // Allow Lovable preview subdomains during development
   /^https:\/\/.*\.lovableproject\.com$/,
 ]
 

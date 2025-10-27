@@ -1,10 +1,8 @@
 import Header from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SEOHead } from "@/components/SEOHead";
-import { Download } from "lucide-react";
 
 const PaymentAndPolicies = () => {
   useEffect(() => {
@@ -247,16 +245,9 @@ const PaymentAndPolicies = () => {
                 Consumers purchasing online have the right to withdraw from a contract within 14 days without giving any reason.
               </p>
             </div>
-            <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-              To exercise this right, please complete and send the "Model Withdrawal Form" below to <a href="mailto:info@montekristobelgrade.com" className="text-primary hover:underline">info@montekristobelgrade.com</a>.
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              To exercise this right, please contact us at <a href="mailto:info@montekristobelgrade.com" className="text-primary hover:underline">info@montekristobelgrade.com</a> to request withdrawal from your purchase.
             </p>
-            <Button 
-              onClick={() => alert('PDF download will be available soon. Please contact info@montekristobelgrade.com for the withdrawal form.')}
-              className="bg-[#FF615A] hover:bg-[#ff4747] text-white"
-            >
-              <Download className="mr-2 h-4 w-4" />
-              Download Model Withdrawal Form (PDF)
-            </Button>
           </section>
 
           {/* Section 11: Payment Security Programs */}

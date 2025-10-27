@@ -101,6 +101,12 @@ export const Footer = () => {
               >
                 FAQ
               </a>
+              <a 
+                href="/legal/payment-and-policies" 
+                className="block text-gray-400 hover:text-[#ff5b5b] transition-colors duration-200 text-sm"
+              >
+                Legal & Payment Info
+              </a>
             </div>
           </div>
           

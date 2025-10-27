@@ -60,6 +60,19 @@ const PaymentAndPolicies = () => {
             </p>
           </div>
 
+          {/* Business Description */}
+          <div className="mb-12 bg-muted/30 p-6 rounded-lg border-l-4 border-primary">
+            <p className="text-lg text-muted-foreground leading-relaxed mb-3">
+              MonteKristo AI provides consulting and implementation services in artificial intelligence, automation, and digital transformation.
+            </p>
+            <p className="text-lg text-muted-foreground leading-relaxed mb-3">
+              Our services include AI strategy sessions, workflow automation, AI agent development, and integration of third-party AI tools.
+            </p>
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              All offerings are delivered digitally, without physical goods or shipping.
+            </p>
+          </div>
+
           <Separator className="mb-12" />
 
           {/* Section 1: Company Details */}
@@ -135,24 +148,29 @@ const PaymentAndPolicies = () => {
             <h2 className="text-2xl lg:text-3xl font-bold text-foreground mb-6 border-b-2 border-border pb-3">
               4. Delivery & Service Terms
             </h2>
-            <div className="grid md:grid-cols-[200px_1fr] gap-4">
-              <div className="font-semibold text-foreground">Delivery methods:</div>
-              <div className="text-lg text-muted-foreground">Courier delivery (or digital delivery for software/services)</div>
-              
-              <div className="font-semibold text-foreground">Delivery area:</div>
-              <div className="text-lg text-muted-foreground">Serbia and international (as agreed)</div>
-              
-              <div className="font-semibold text-foreground">Dispatch time:</div>
-              <div className="text-lg text-muted-foreground">Typically within 1–2 business days</div>
-              
-              <div className="font-semibold text-foreground">Delivery time:</div>
-              <div className="text-lg text-muted-foreground">2–5 business days depending on destination</div>
-              
-              <div className="font-semibold text-foreground">Limitations:</div>
-              <div className="text-lg text-muted-foreground">Remote areas or international customs clearance may cause delays</div>
-              
-              <div className="font-semibold text-foreground">Tracking:</div>
-              <div className="text-lg text-muted-foreground">Provided for all courier shipments</div>
+            <div className="space-y-4">
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                MonteKristo AI provides digital and consulting services, not physical goods.
+              </p>
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                All services are delivered electronically — via email, secure online links, or collaborative platforms such as Slack, Notion, or Zoom.
+              </p>
+              <div className="bg-muted/50 p-6 rounded-lg mt-4">
+                <h3 className="font-semibold text-foreground mb-3 text-lg">Service delivery time:</h3>
+                <ul className="space-y-2 text-lg text-muted-foreground ml-4">
+                  <li className="flex items-start">
+                    <span className="mr-2">•</span>
+                    <span><strong className="text-foreground">Standard delivery:</strong> 1–5 business days after payment confirmation (depending on project complexity).</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="mr-2">•</span>
+                    <span><strong className="text-foreground">Express delivery:</strong> available by prior agreement.</span>
+                  </li>
+                </ul>
+              </div>
+              <p className="text-lg text-muted-foreground leading-relaxed mt-4">
+                There are no physical shipments, courier services, or tracking numbers involved.
+              </p>
             </div>
           </section>
 
@@ -199,13 +217,24 @@ const PaymentAndPolicies = () => {
             </h2>
             <div className="space-y-4">
               <p className="text-lg text-muted-foreground leading-relaxed">
-                If your parcel shows visible damage upon delivery, please refuse it and contact us immediately at <a href="tel:+381641102394" className="text-primary hover:underline">+381641102394</a>.
+                If you are not satisfied with the delivered digital service, please contact us within 8 days of delivery at{" "}
+                <a href="mailto:info@montekristobelgrade.com" className="text-primary hover:underline">
+                  info@montekristobelgrade.com
+                </a>{" "}
+                or{" "}
+                <a href="tel:+381641102394" className="text-primary hover:underline">
+                  +381641102394
+                </a>.
               </p>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                If you received a wrong or defective item, contact us within 24 hours at <a href="mailto:info@montekristobelgrade.com" className="text-primary hover:underline">info@montekristobelgrade.com</a>.
+                We will review your case and either:
               </p>
+              <ul className="list-disc list-inside space-y-2 text-lg text-muted-foreground ml-4">
+                <li>provide a correction or revision of the service, or</li>
+                <li>issue a refund in accordance with our Refund Policy.</li>
+              </ul>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                We respond to complaints within 8 days and aim to resolve them within 14 days.
+                We respond to all complaints within 8 days and aim to resolve them within 14 days.
               </p>
             </div>
           </section>
@@ -245,9 +274,21 @@ const PaymentAndPolicies = () => {
                 Consumers purchasing online have the right to withdraw from a contract within 14 days without giving any reason.
               </p>
             </div>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              To exercise this right, please contact us at <a href="mailto:info@montekristobelgrade.com" className="text-primary hover:underline">info@montekristobelgrade.com</a> to request withdrawal from your purchase.
+            <p className="text-lg text-muted-foreground leading-relaxed mb-4">
+              To exercise this right, please contact us at{" "}
+              <a href="mailto:info@montekristobelgrade.com" className="text-primary hover:underline">
+                info@montekristobelgrade.com
+              </a>{" "}
+              to request withdrawal from your purchase.
             </p>
+            <div className="bg-amber-50 dark:bg-amber-950/30 border-l-4 border-amber-500 p-6 rounded-r-lg">
+              <p className="text-base font-medium text-foreground mb-2">
+                <strong>Exception:</strong>
+              </p>
+              <p className="text-base text-muted-foreground leading-relaxed">
+                This right does not apply to services that have been fully delivered with the consumer's prior consent before the 14-day period expires (for example, custom AI agent setups or automation workflows).
+              </p>
+            </div>
           </section>
 
           {/* Section 11: Payment Security Programs */}

@@ -158,6 +158,14 @@ export const Footer = () => {
             </a>
           ))}
         </div>
+
+        {/* Legal Payment Notice */}
+        <div className="text-center mt-6 px-4">
+          <p className="text-gray-400 text-xs leading-relaxed">
+            We accept valid payment cards: Visa, Mastercard, Maestro, and DinaCard.<br />
+            Payments are processed securely by OTP Banka Serbia through Visa Secure and Mastercard ID Check programs.
+          </p>
+        </div>
       </div>
     </footer>
   );

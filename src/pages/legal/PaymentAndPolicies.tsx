@@ -148,30 +148,26 @@ const PaymentAndPolicies = () => {
             <h2 className="text-2xl lg:text-3xl font-bold text-foreground mb-6 border-b-2 border-border pb-3">
               4. Delivery & Service Terms
             </h2>
-            <div className="space-y-4">
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                MonteKristo AI provides digital and consulting services, not physical goods.
-              </p>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                All services are delivered electronically — via email, secure online links, or collaborative platforms such as Slack, Notion, or Zoom.
-              </p>
-              <div className="bg-muted/50 p-6 rounded-lg mt-4">
-                <h3 className="font-semibold text-foreground mb-3 text-lg">Service delivery time:</h3>
-                <ul className="space-y-2 text-lg text-muted-foreground ml-4">
-                  <li className="flex items-start">
-                    <span className="mr-2">•</span>
-                    <span><strong className="text-foreground">Standard delivery:</strong> 1–5 business days after payment confirmation (depending on project complexity).</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2">•</span>
-                    <span><strong className="text-foreground">Express delivery:</strong> available by prior agreement.</span>
-                  </li>
-                </ul>
-              </div>
-              <p className="text-lg text-muted-foreground leading-relaxed mt-4">
-                There are no physical shipments, courier services, or tracking numbers involved.
-              </p>
-            </div>
+      <div className="space-y-4">
+        <p className="text-lg text-muted-foreground leading-relaxed">
+          MonteKristo AI provides professional and digital consulting services, not physical goods.
+        </p>
+        <p className="text-lg text-muted-foreground leading-relaxed">
+          Each engagement is customized to the client's needs and may include AI strategy sessions, automation architecture, or deployment of AI agents.
+        </p>
+        <p className="text-lg text-muted-foreground leading-relaxed">
+          Service delivery begins immediately after mutual agreement, contract signing, and—if applicable—payment of the setup fee.
+        </p>
+        <p className="text-lg text-muted-foreground leading-relaxed">
+          Project timelines, milestones, and deliverables are defined individually for each client within the signed proposal or service agreement.
+        </p>
+        <p className="text-lg text-muted-foreground leading-relaxed">
+          All services are delivered electronically through secure digital channels (such as email, shared dashboards, or collaboration tools).
+        </p>
+        <p className="text-lg text-muted-foreground leading-relaxed">
+          There are no physical shipments, courier deliveries, or tracking numbers associated with our services.
+        </p>
+      </div>
           </section>
 
           {/* Section 5: Privacy Policy */}

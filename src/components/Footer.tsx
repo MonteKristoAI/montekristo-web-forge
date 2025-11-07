@@ -30,13 +30,13 @@ export const Footer = () => {
     {
       name: "Visa Secure",
       src: "https://hfpvnsbiewudpqbtlvte.supabase.co/storage/v1/object/public/OTP%20Logos/visa-secure_blu_72dpi.png",
-      url: "https://rs.visa.com/pay-with-visa/security-and-assistance/protected-everywhere.html",
+      url: "https://rs.visa.com/products/visa-secure.html",
       alt: "Visa Secure"
     },
     {
       name: "Mastercard Identity Check",
       src: "https://hfpvnsbiewudpqbtlvte.supabase.co/storage/v1/object/public/OTP%20Logos/mc_idcheck_hrz_rgb_rev.png",
-      url: "https://www.mastercard.rs/sr-rs/korisnici/podrska/sigurnost-i-zastita/identity-check.html",
+      url: "https://www.mastercard.rs/sr-rs/korisnici/pronadite-karticu.html",
       alt: "Mastercard Identity Check"
     }
   ];
@@ -178,13 +178,9 @@ export const Footer = () => {
             </a>
           ))}
           
-          {/* Bank Logo - With Link */}
-          <a
-            href={bankLogo.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="transition-opacity duration-200 hover:opacity-80"
-            aria-label="OTP banka – official website"
+          {/* Bank Logo - No Link */}
+          <div
+            aria-label={bankLogo.alt}
           >
             <img
               src={bankLogo.src}
@@ -194,7 +190,7 @@ export const Footer = () => {
               width="auto"
               height="56"
             />
-          </a>
+          </div>
         </div>
 
         {/* Legal Payment Notice */}

@@ -30,7 +30,7 @@ export const Footer = () => {
     {
       name: "Visa Secure",
       src: "https://hfpvnsbiewudpqbtlvte.supabase.co/storage/v1/object/public/OTP%20Logos/visa-secure_blu_72dpi.png",
-      url: "https://rs.visa.com/run-your-business/small-business-tools/payment-technology/visa-secure.html",
+      url: "https://rs.visa.com/pay-with-visa/security-and-assistance/protected-everywhere.html",
       alt: "Visa Secure"
     },
     {
@@ -142,7 +142,6 @@ export const Footer = () => {
           {acceptanceLogos.map((logo) => (
             <div
               key={logo.name}
-              className="transition-opacity duration-200"
               aria-label={logo.alt}
             >
               <img
@@ -164,7 +163,9 @@ export const Footer = () => {
               target="_blank"
               rel="noopener noreferrer"
               className="transition-opacity duration-200 hover:opacity-80"
-              aria-label={logo.alt}
+              aria-label={logo.name === "Visa Secure" 
+                ? "Visa Secure – security information" 
+                : "Mastercard Identity Check – security information"}
             >
               <img
                 src={logo.src}
@@ -183,7 +184,7 @@ export const Footer = () => {
             target="_blank"
             rel="noopener noreferrer"
             className="transition-opacity duration-200 hover:opacity-80"
-            aria-label={bankLogo.alt}
+            aria-label="OTP banka – official website"
           >
             <img
               src={bankLogo.src}

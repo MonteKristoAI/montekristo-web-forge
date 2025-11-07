@@ -30,14 +30,14 @@ export const Footer = () => {
     {
       name: "Visa Secure",
       src: "https://hfpvnsbiewudpqbtlvte.supabase.co/storage/v1/object/public/OTP%20Logos/visa-secure_blu_72dpi.png",
-      url: "https://rs.visa.com/pay-with-visa/security-and-assistance/protected-everywhere.html",
-      alt: "Visa Secure Program"
+      url: "https://rs.visa.com/run-your-business/small-business-tools/payment-technology/visa-secure.html",
+      alt: "Visa Secure"
     },
     {
-      name: "Mastercard ID Check",
+      name: "Mastercard Identity Check",
       src: "https://hfpvnsbiewudpqbtlvte.supabase.co/storage/v1/object/public/OTP%20Logos/mc_idcheck_hrz_rgb_rev.png",
-      url: "http://www.mastercard.com/rs/consumer/credit-cards.html",
-      alt: "Mastercard ID Check"
+      url: "https://www.mastercard.rs/sr-rs/korisnici/podrska/sigurnost-i-zastita/identity-check.html",
+      alt: "Mastercard Identity Check"
     }
   ];
 
@@ -200,7 +200,7 @@ export const Footer = () => {
         <div className="text-center mt-6 px-4">
           <p className="text-gray-400 text-xs leading-relaxed">
             We accept valid payment cards: Visa, Mastercard, Maestro, and DinaCard.<br />
-            Payments are processed securely by OTP Banka Serbia through Visa Secure and Mastercard ID Check programs.
+            Payments are processed securely through Visa Secure and Mastercard Identity Check programs.
           </p>
         </div>
       </div>

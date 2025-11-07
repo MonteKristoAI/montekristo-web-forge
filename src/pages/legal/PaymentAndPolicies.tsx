@@ -135,10 +135,7 @@ const PaymentAndPolicies = () => {
             </h2>
             <div className="space-y-4">
               <p className="text-lg text-muted-foreground leading-relaxed">
-                All payments are made in the local currency of the Republic of Serbia — Serbian dinar (RSD). Prices shown in other currencies use the National Bank of Serbia middle exchange rate for information only. The amount charged to your card will be expressed in your local currency via conversion applied by the card schemes, which is not known to us at the time of the transaction. As a result, a minor difference may occur between the price shown on our website and the amount on your card statement.
-              </p>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Sva plaćanja biće izvršena u lokalnoj valuti Republike Srbije – dinar (RSD). Za informativni prikaz cena u drugim valutama koristi se srednji kurs Narodne Banke Srbije. Iznos za koji će biti zadužena Vaša platna kartica biće izražen u Vašoj lokalnoj valuti kroz konverziju u istu po kursu koji koriste kartičarske organizacije, a koji nama u trenutku transakcije ne može biti poznat. Kao rezultat ove konverzije postoji mogućnost neznatne razlike od originalne cene navedene na našem sajtu i one koju možete videti na izvodu po računu vaše platne kartice.
+                All payments are made in the local currency of the Republic of Serbia — Serbian dinar (RSD). Prices shown in other currencies use the National Bank of Serbia middle exchange rate for information only. The amount charged to your card will be expressed in your local currency via conversion applied by the card schemes and/or your issuer, which is not known to us at the time of the transaction. As a result, a minor difference may occur between the price shown on our website and the amount on your card statement.
               </p>
             </div>
           </section>
@@ -197,12 +194,9 @@ const PaymentAndPolicies = () => {
               6. Protection of Confidential Transaction Data
             </h2>
             <div className="space-y-4">
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                When entering card details, confidential information is transmitted over a public network in a protected (encrypted) form. At no point are card details accessible to our systems.
-              </p>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Prilikom unošenja podataka o platnoj kartici, poverljive informacija se prenose putem javne mreže u zaštićenoj (kriptovanoj) formi. Niti jednog trenutka podaci o platnoj kartici nisu dostupni našem sistemu.
-              </p>
+        <p className="text-lg text-muted-foreground leading-relaxed">
+          When entering card details, confidential information is transmitted over a secure (SSL/TLS) connection directly to the bank's hosted payment page. Card data is never stored or processed on our servers.
+        </p>
             </div>
           </section>
 
@@ -240,17 +234,11 @@ const PaymentAndPolicies = () => {
             <h2 className="text-2xl lg:text-3xl font-bold text-foreground mb-6 border-b-2 border-border pb-3">
               8. Refunds for Card Payments
             </h2>
-            <div className="space-y-4">
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Refunds for transactions made with payment cards are processed exclusively to the same card used for the original transaction, via Visa, Mastercard/Maestro, or Dina channels.
-              </p>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                We initiate approved refunds within 5 business days; depending on your card issuer, funds may appear on your statement within 3–14 days.
-              </p>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Povraćaj pokrećemo u roku od 5 radnih dana od odobrenja zahteva; knjiženje na izvodu zavisi od izdavaoca kartice (3–14 dana).
-              </p>
-            </div>
+      <div className="space-y-4">
+        <p className="text-lg text-muted-foreground leading-relaxed">
+          Refunds for transactions made with payment cards are processed exclusively to the same card used for the original transaction (Visa, Mastercard/Maestro, or Dina). We initiate approved refunds within 5 business days; depending on your card issuer, funds may appear on your statement within 3–14 days.
+        </p>
+      </div>
           </section>
 
           {/* Section 9: VAT Statement */}
@@ -306,7 +294,7 @@ const PaymentAndPolicies = () => {
               </p>
               <ul className="list-disc list-inside space-y-2 text-lg text-muted-foreground ml-4">
                 <li><strong className="text-foreground">Visa Secure</strong></li>
-                <li><strong className="text-foreground">Mastercard ID Check</strong></li>
+                <li><strong className="text-foreground">Mastercard Identity Check</strong></li>
               </ul>
               <p className="text-lg text-muted-foreground leading-relaxed">
                 Card payments are authenticated via Visa Secure and Mastercard Identity Check and processed in accordance with applicable PCI DSS standards.
@@ -352,9 +340,6 @@ const PaymentAndPolicies = () => {
             <div className="space-y-4">
               <p className="text-lg text-muted-foreground leading-relaxed">
                 Our services and purchases are intended for individuals 18 years of age or older.
-              </p>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Kupovina i korišćenje usluge namenjeni su licima starijim od 18 godina.
               </p>
             </div>
           </section>

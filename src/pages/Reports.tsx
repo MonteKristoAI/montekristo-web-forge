@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
 // Password stored in fragments so it never appears as a single string literal in the bundle
-const _f = ["ReigSolar", "2026", "K9xmPqW7vLzNj"];
+const _f = ["MK-Portal", "2026", "Rz8vXqNm4wKj"];
 const _p = () => _f.join("-");
 
 export const REPORTS_STORAGE_KEY = "mk_portal_v1";

@@ -116,7 +116,10 @@
     .work-item span { font-size: 13px; color: var(--text); line-height: 1.6; }
 
     /* ── KPI CARDS ── */
-    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .cards { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; }
+    .mcard { grid-column: span 2; }
+    .mcard:nth-child(4) { grid-column: 2 / 4; }
+    .mcard:nth-child(5) { grid-column: 4 / 6; }
     .mcard {
       background: var(--surface); border: 1px solid var(--border);
       border-radius: var(--radius); padding: 22px 22px 18px;
@@ -209,7 +212,10 @@
     @media (max-width: 820px) {
       .wrap { padding: 0 20px; }
       .header-inner { flex-direction: column; gap: 16px; }
-      .cards { grid-template-columns: repeat(2, 1fr); }
+      .cards { grid-template-columns: repeat(3, 1fr); }
+      .mcard { grid-column: span 1; }
+      .mcard:nth-child(4) { grid-column: span 1; }
+      .mcard:nth-child(5) { grid-column: span 1; }
     }
     @media (max-width: 600px) {
       .wrap { padding: 0 14px; }
@@ -218,6 +224,7 @@
       .hstat { padding: 10px 10px; min-width: 0; flex: 1; }
       .hstat .v { font-size: 20px; }
       .cards { grid-template-columns: 1fr; }
+      .mcard, .mcard:nth-child(4), .mcard:nth-child(5) { grid-column: span 1; }
       .charts-grid { grid-template-columns: 1fr; }
       .wins-grid { grid-template-columns: 1fr; }
       .mval { font-size: 32px; }
@@ -260,7 +267,6 @@
         <span class="period-badge">Q1 2026 — Focus Period: March 2026</span>
       </div>
       <div class="header-stats">
-        <div class="hstat"><div class="v teal">21</div><div class="l">Authority</div></div>
         <div class="hstat"><div class="v green">104</div><div class="l">Est. Traffic</div></div>
         <div class="hstat"><div class="v">248</div><div class="l">Keywords</div></div>
         <div class="hstat"><div class="v orange">713</div><div class="l">Ref. Domains</div></div>
@@ -582,7 +588,6 @@ function renderKPIs() {
   const k = reportData.kpis;
   const a = reportData.site_audit;
   const cards = [
-    { label: 'Authority Score',         val: k.authority_score,                                    unit: '/ 100',  sub: 'Semrush domain authority (0–100 scale)',       cls: 't' },
     { label: 'Organic Traffic (est.)',  val: k.organic_traffic_est.value,  delta: '+' + k.organic_traffic_est.change_pct + '% vs 4w ago', sub: 'Semrush estimate from keyword rankings + CTR model', cls: 'g' },
     { label: 'Organic Keywords (est.)', val: k.organic_keywords_est,                               sub: 'Positions 1–100 · US · Desktop · Semrush',    cls: 't' },
     { label: 'Referring Domains',       val: k.ref_domains.toLocaleString(), delta: '+19 vs Feb 2026', sub: 'Up from 694 in February 2026',              cls: 'o' },

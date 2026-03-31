@@ -32,6 +32,27 @@ const CLIENTS = [
     ],
   },
   {
+    id: "luxe",
+    pw: ["LUXE", "2026", "Nf7mRsKvPxQw"].join("-"),
+    label: "LuxeShutters",
+    reports: [
+      {
+        id: "luxeshutters-ai-guide",
+        title: "LuxeShutters — AI System Guide",
+        subtitle: "Full system overview · Automations, CRM, AI Agents",
+        date: "March 31, 2026",
+        tag: "System Guide",
+        description:
+          "Complete guide to the LuxeShutters AI system: lead channels, GHL CRM pipeline, Quote Generator, Follow-up sequences, Sale Won automation, Xero invoicing, Cora ordering, and Retell AI voice agent.",
+        stats: [
+          { label: "Workflows", value: "10", delta: "All active" },
+          { label: "Lead Channels", value: "5", delta: "Phone · Web · Forms" },
+          { label: "Automated", value: "95%", delta: "Quote to invoice" },
+        ],
+      },
+    ],
+  },
+  {
     id: "bm",
     pw: ["BM", "2026", "Tz4nWrKvPxQm"].join("-"),
     label: "BreathMastery",

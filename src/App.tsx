@@ -16,6 +16,7 @@ import Pricing from "./pages/Pricing";
 import Reports from "./pages/Reports";
 import ReigSolarQ12026 from "./pages/reports/ReigSolarQ12026";
 import BreathMasteryQ12026 from "./pages/reports/BreathMasteryQ12026";
+import LuxeShuttersGuide from "./pages/reports/LuxeShuttersGuide";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -39,6 +40,7 @@ const App = () => (
           <Route path="/reports" element={<Reports />} />
           <Route path="/reports/reig-solar-q1-2026" element={<ReigSolarQ12026 />} />
           <Route path="/reports/breathmastery-q1-2026" element={<BreathMasteryQ12026 />} />
+          <Route path="/reports/luxeshutters-ai-guide" element={<LuxeShuttersGuide />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
           </Routes>

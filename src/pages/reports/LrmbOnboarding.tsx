@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Check, Plus, Trash2, Upload, ChevronRight, ClipboardList } from "lucide-react";
 import { SESSION_KEY } from "@/pages/Reports";
+import { supabase } from "@/integrations/supabase/client";
 
 type FormData = Record<string, any>;
 interface StaffRow { name: string; email: string; phone: string; role: string; properties: string; }
@@ -97,6 +98,8 @@ const LrmbOnboarding = () => {
   const [showSaved, setShowSaved] = useState(false);
   const [savedAt, setSavedAt] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tabsRef = useRef<HTMLDivElement>(null);
 
@@ -719,10 +722,28 @@ const LrmbOnboarding = () => {
             <div className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-6 text-center">
               <h3 className="text-white font-semibold mb-2">Ready to submit?</h3>
               <p className="text-gray-500 text-sm mb-6 leading-relaxed">Once you submit, your answers will be saved and we'll begin reviewing within 24 hours. You can still return and update your answers after submitting.</p>
-              <button onClick={() => { localStorage.setItem(LS_SUBMITTED_KEY,"true"); setSubmitted(true); }}
-                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-semibold text-sm transition-all duration-150">
-                <Check className="w-4 h-4" /> Submit Questionnaire
+              <button
+                onClick={async () => {
+                  setSubmitting(true);
+                  setSubmitError(null);
+                  const { error } = await supabase.from("form_submissions").insert({
+                    client: "lrmb",
+                    data: { formData, staffRows, adminRows, fileNames: Object.keys(fileNames) },
+                  });
+                  if (error) {
+                    setSubmitError("Something went wrong. Please try again or email your answers to hello@montekristoai.com.");
+                    setSubmitting(false);
+                    return;
+                  }
+                  localStorage.setItem(LS_SUBMITTED_KEY, "true");
+                  setSubmitted(true);
+                }}
+                disabled={submitting}
+                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 active:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold text-sm transition-all duration-150">
+                {submitting ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Check className="w-4 h-4" />}
+                {submitting ? "Submitting..." : "Submit Questionnaire"}
               </button>
+              {submitError && <p className="text-red-400 text-xs mt-3">{submitError}</p>}
               <p className="text-gray-700 text-xs mt-4">Your answers are auto-saved — you can close this tab and return later.</p>
             </div>
           </div>

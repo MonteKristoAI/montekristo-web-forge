@@ -73,6 +73,27 @@ const CLIENTS = [
       },
     ],
   },
+  {
+    id: "lrmb",
+    pw: ["LRMB", "2026", "Mk7xFpNrQwVd"].join("-"),
+    label: "LRMB",
+    reports: [
+      {
+        id: "lrmb-onboarding",
+        title: "LRMB — Production Onboarding",
+        subtitle: "Field Ops Discovery Questionnaire · April 2026",
+        date: "April 2026",
+        tag: "Onboarding",
+        description:
+          "Complete this questionnaire to help us configure your production Field Ops app. Covers properties, staff, task types, integrations, branding, and deployment preferences.",
+        stats: [
+          { label: "Sections", value: "14", delta: "All areas covered" },
+          { label: "Auto-saved", value: "Yes", delta: "Resumes where you left off" },
+          { label: "Est. time", value: "30–45 min", delta: "Complete in stages" },
+        ],
+      },
+    ],
+  },
 ];
 
 export const SESSION_KEY = "mk_portal_v2";

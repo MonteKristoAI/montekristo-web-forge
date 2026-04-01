@@ -40,12 +40,12 @@ const AIAgentsPracticalPlaybook = () => {
       "name": "MonteKristo AI",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://montekristoai.com/logo/favicon-512.png"
+        "url": "https://montekristobelgrade.com/logo/favicon-512.png"
       }
     },
     "datePublished": "2025-07-24",
     "dateModified": "2025-07-24",
-    "url": "https://montekristoai.com/blog/ai-agents-practical-playbook"
+    "url": "https://montekristobelgrade.com/blog/ai-agents-practical-playbook"
   };
 
   return (

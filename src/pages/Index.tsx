@@ -19,8 +19,8 @@ const Index = () => {
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "MonteKristo AI",
-    "url": "https://montekristoai.com",
-    "logo": "https://montekristoai.com/logo/favicon-512.png",
+    "url": "https://montekristobelgrade.com",
+    "logo": "https://montekristobelgrade.com/logo/favicon-512.png",
     "description": "AI transformation partner for scalable SaaS growth. We design & deploy custom AI agents that replace manual outreach, CRM updates, and content bottlenecks.",
     "sameAs": [
       "https://www.linkedin.com/company/montekristo-ai",
@@ -33,7 +33,7 @@ const Index = () => {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "MonteKristo AI",
-    "url": "https://montekristoai.com"
+    "url": "https://montekristobelgrade.com"
   };
 
   // FAQ Schema

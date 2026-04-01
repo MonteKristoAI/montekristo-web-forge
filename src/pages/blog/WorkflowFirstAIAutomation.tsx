@@ -41,12 +41,12 @@ const WorkflowFirstAIAutomation = () => {
       "name": "MonteKristo AI",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://montekristoai.com/logo/favicon-512.png"
+        "url": "https://montekristobelgrade.com/logo/favicon-512.png"
       }
     },
     "datePublished": "2024-12-10",
     "dateModified": "2024-12-10",
-    "url": "https://montekristoai.com/blog/workflow-first-ai-automation"
+    "url": "https://montekristobelgrade.com/blog/workflow-first-ai-automation"
   };
 
   return (

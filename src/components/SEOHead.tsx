@@ -23,7 +23,7 @@ export const SEOHead = ({
   article,
   schema = []
 }: SEOHeadProps) => {
-  const baseUrl = "https://montekristoai.com"; // Update with actual domain
+  const baseUrl = "https://montekristobelgrade.com"; // Update with actual domain
   const fullCanonical = canonical ? `${baseUrl}${canonical}` : baseUrl;
   const fullOgImage = ogImage.startsWith('http') ? ogImage : `${baseUrl}${ogImage}`;
 

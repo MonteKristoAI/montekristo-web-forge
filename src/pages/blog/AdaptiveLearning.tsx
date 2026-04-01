@@ -40,12 +40,12 @@ const AdaptiveLearning = () => {
       "name": "MonteKristo AI",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://montekristoai.com/logo/favicon-512.png"
+        "url": "https://montekristobelgrade.com/logo/favicon-512.png"
       }
     },
     "datePublished": "2024-12-15",
     "dateModified": "2024-12-15",
-    "url": "https://montekristoai.com/blog/from-checkboxes-to-growth-engines"
+    "url": "https://montekristobelgrade.com/blog/from-checkboxes-to-growth-engines"
   };
 
   return (

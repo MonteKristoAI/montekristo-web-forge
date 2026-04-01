@@ -708,7 +708,7 @@ const LrmbOnboarding = () => {
                 <span className="text-xs font-bold bg-blue-500/15 text-blue-300 px-2.5 py-1 rounded-full border border-blue-500/20">Deliverables</span>
                 <h2 className="text-white font-semibold text-base">Files We Need From You</h2>
               </div>
-              <p className="text-xs text-gray-500 mt-1 mb-6">Check each item you have ready, attach the file, and add a Google Drive link or notes. Email all files to <span className="text-gray-300">hello@montekristoai.com</span>.</p>
+              <p className="text-xs text-gray-500 mt-1 mb-6">Check each item you have ready, attach the file, and add a Google Drive link or notes. Email all files to <span className="text-gray-300">contact@montekristobelgrade.com</span>.</p>
               <div className="space-y-5">
                 {DELIVERABLES.map((item) => {
                   const readyKey = `${item.key}_ready`;
@@ -753,7 +753,7 @@ const LrmbOnboarding = () => {
                     data: { formData, staffRows, adminRows, fileNames: Object.keys(fileNames) },
                   });
                   if (error) {
-                    setSubmitError("Something went wrong. Please try again or email your answers to hello@montekristoai.com.");
+                    setSubmitError("Something went wrong. Please try again or email your answers to contact@montekristobelgrade.com.");
                     setSubmitting(false);
                     return;
                   }

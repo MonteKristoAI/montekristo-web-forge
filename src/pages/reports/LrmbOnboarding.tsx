@@ -97,6 +97,7 @@ const LrmbOnboarding = () => {
   const [fileNames, setFileNames] = useState<Record<string, string>>({});
   const [filePaths, setFilePaths] = useState<Record<string, string>>({});
   const [fileUploading, setFileUploading] = useState<Record<string, boolean>>({});
+  const [fileErrors, setFileErrors] = useState<Record<string, string>>({});
   const [showSaved, setShowSaved] = useState(false);
   const [savedAt, setSavedAt] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -122,6 +123,8 @@ const LrmbOnboarding = () => {
       } catch {}
     }
     if (localStorage.getItem(LS_SUBMITTED_KEY) === "true") setSubmitted(true);
+    const savedPw = localStorage.getItem("mk_lrmb_viewpw");
+    if (savedPw) setViewPassword(savedPw);
   }, [navigate]);
 
   const triggerSave = useCallback(() => {
@@ -133,7 +136,7 @@ const LrmbOnboarding = () => {
       setShowSaved(true);
       setTimeout(() => setShowSaved(false), 1800);
     }, 500);
-  }, [formData, staffRows, adminRows, fileNames]);
+  }, [formData, staffRows, adminRows, fileNames, filePaths]);
 
   useEffect(() => { triggerSave(); }, [formData, staffRows, adminRows, fileNames, filePaths, triggerSave]);
 
@@ -391,9 +394,6 @@ const LrmbOnboarding = () => {
               Our status flow: <span className="text-gray-200">new → assigned → in_progress → waiting_parts → blocked → completed → verified</span>
             </div>
             {rg("s04_flow", "Does this status flow match your operations?", ["Yes, this is perfect","Mostly — minor changes needed","Needs significant changes"])}
-            {(formData.s04_flow === "Mostly — minor changes needed" || formData.s04_flow === "Needs significant changes") && (
-              <div className="ml-6 -mt-2"><TA value={formData.s04_flow_changes ?? ""} onChange={(v) => set("s04_flow_changes", v)} placeholder="What would you change?" /></div>
-            )}
             <Hr />
             {cbg("s04_blocked_means", '"Blocked" means: (select all that apply)', ["Missing parts or materials","Waiting for approval","Vendor no-show","Guest issue / access problem"])}
             <Hr />
@@ -415,9 +415,6 @@ const LrmbOnboarding = () => {
             {rg("s04_note", "Is a note required to close a task?", ["Required for all task types","Required for blocked / issue tasks","Optional","Not required"])}
             <Hr />
             {rg("s04_overdue", 'When does a task become "overdue"?', ["24 hours after creation","48 hours after creation","72 hours after creation","Depends on priority level","Custom threshold"])}
-            {formData.s04_overdue === "Custom threshold" && (
-              <div className="ml-6 -mt-2"><TI value={formData.s04_overdue_custom ?? ""} onChange={(v) => set("s04_overdue_custom", v)} placeholder="Describe your threshold..." /></div>
-            )}
             <Hr />
             <div>
               <FL hint="Define each level and how quickly it needs to be resolved.">Priority level definitions</FL>
@@ -543,9 +540,6 @@ const LrmbOnboarding = () => {
             )}
             <Hr />
             {rg("s08_volume", "Notification volume preference", ["All events — notify for everything","Critical only — urgent and overdue","Custom — specify below"])}
-            {formData.s08_volume === "Custom — specify below" && (
-              <div className="ml-6 -mt-2"><TA value={formData.s08_volume_custom ?? ""} onChange={(v) => set("s08_volume_custom", v)} placeholder="Describe which events should trigger notifications..." /></div>
-            )}
             {sq("s08", "notifications and how your team communicates")}
           </SC>
         )}
@@ -709,7 +703,6 @@ const LrmbOnboarding = () => {
             )}
             <Hr />
             {rg("s14_guest_bypass", "What happens when a guest complains directly to a manager, bypassing the system?", ["Manager enters it into the app — it becomes a task","Handled outside the system entirely","Hybrid — sometimes in, sometimes out"])}
-            <div className="mt-2"><TA value={formData.s14_guest_bypass_detail ?? ""} onChange={(v) => set("s14_guest_bypass_detail", v)} placeholder="Any additional context..." rows={2} /></div>
             {sq("s14", "anything we haven't asked — processes, edge cases, things that matter most to your team")}
           </SC>
         )}
@@ -760,10 +753,14 @@ const LrmbOnboarding = () => {
                                 const { error } = await supabase.storage.from("lrmb-onboarding").upload(path, f);
                                 if (!error) {
                                   setFilePaths((prev) => ({ ...prev, [item.key]: path }));
+                                  setFileErrors((prev) => { const n = { ...prev }; delete n[item.key]; return n; });
+                                } else {
+                                  setFileErrors((prev) => ({ ...prev, [item.key]: "Upload failed — use the notes field below to share a Google Drive link instead." }));
                                 }
                                 setFileUploading((prev) => ({ ...prev, [item.key]: false }));
                               }} />
                             </label>
+                            {fileErrors[item.key] && <p className="text-red-400 text-xs mt-1">{fileErrors[item.key]}</p>}
                             <input value={formData[notesKey] ?? ""} onChange={(e) => set(notesKey, e.target.value)} placeholder="Notes or Google Drive link..."
                               className="w-full px-3 py-2 rounded-lg bg-white/[0.05] border border-white/[0.08] text-gray-200 text-xs placeholder-gray-600 outline-none focus:border-blue-500/50 transition-colors" />
                           </div>
@@ -795,6 +792,7 @@ const LrmbOnboarding = () => {
                     return;
                   }
                   localStorage.setItem(LS_SUBMITTED_KEY, "true");
+                  localStorage.setItem("mk_lrmb_viewpw", viewPw);
                   setViewPassword(viewPw);
                   setSubmitted(true);
                 }}

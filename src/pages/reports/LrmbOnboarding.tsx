@@ -95,6 +95,8 @@ const LrmbOnboarding = () => {
   const [staffRows, setStaffRows] = useState<StaffRow[]>([{ name: "", email: "", phone: "", role: "field_staff", properties: "" }]);
   const [adminRows, setAdminRows] = useState<AdminRow[]>([{ name: "", email: "" }]);
   const [fileNames, setFileNames] = useState<Record<string, string>>({});
+  const [filePaths, setFilePaths] = useState<Record<string, string>>({});
+  const [fileUploading, setFileUploading] = useState<Record<string, boolean>>({});
   const [showSaved, setShowSaved] = useState(false);
   const [savedAt, setSavedAt] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -115,6 +117,7 @@ const LrmbOnboarding = () => {
         if (p.staffRows?.length) setStaffRows(p.staffRows);
         if (p.adminRows?.length) setAdminRows(p.adminRows);
         if (p.fileNames) setFileNames(p.fileNames);
+        if (p.filePaths) setFilePaths(p.filePaths);
       } catch {}
     }
     if (localStorage.getItem(LS_SUBMITTED_KEY) === "true") setSubmitted(true);
@@ -123,7 +126,7 @@ const LrmbOnboarding = () => {
   const triggerSave = useCallback(() => {
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => {
-      localStorage.setItem(LS_KEY, JSON.stringify({ formData, staffRows, adminRows, fileNames }));
+      localStorage.setItem(LS_KEY, JSON.stringify({ formData, staffRows, adminRows, fileNames, filePaths }));
       const n = new Date();
       setSavedAt(`${n.getHours()}:${String(n.getMinutes()).padStart(2, "0")}`);
       setShowSaved(true);
@@ -131,7 +134,7 @@ const LrmbOnboarding = () => {
     }, 500);
   }, [formData, staffRows, adminRows, fileNames]);
 
-  useEffect(() => { triggerSave(); }, [formData, staffRows, adminRows, fileNames, triggerSave]);
+  useEffect(() => { triggerSave(); }, [formData, staffRows, adminRows, fileNames, filePaths, triggerSave]);
 
   const set = (key: string, value: any) => setFormData((prev) => ({ ...prev, [key]: value }));
   const toggle = (key: string, opt: string) => {
@@ -726,10 +729,29 @@ const LrmbOnboarding = () => {
                           </div>
                           <p className="text-xs text-gray-500 mt-0.5">{item.format}</p>
                           <div className="mt-3 space-y-2">
-                            <label className={`flex items-center gap-2 text-xs cursor-pointer px-3 py-2 rounded-lg border transition-colors ${fileNames[item.key] ? "border-blue-500/30 bg-blue-500/5 text-blue-300" : "border-white/[0.08] text-gray-500 hover:border-gray-500 hover:text-gray-400"}`}>
-                              <Upload className="w-3.5 h-3.5 flex-shrink-0" />
-                              {fileNames[item.key] || "Select file"}
-                              <input type="file" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) setFileNames((prev) => ({ ...prev, [item.key]: f.name })); }} />
+                            <label className={`flex items-center gap-2 text-xs cursor-pointer px-3 py-2 rounded-lg border transition-colors ${filePaths[item.key] ? "border-green-500/30 bg-green-500/5 text-green-300" : fileNames[item.key] ? "border-blue-500/30 bg-blue-500/5 text-blue-300" : "border-white/[0.08] text-gray-500 hover:border-gray-500 hover:text-gray-400"}`}>
+                              {fileUploading[item.key]
+                                ? <div className="w-3.5 h-3.5 border-2 border-white/20 border-t-blue-400 rounded-full animate-spin flex-shrink-0" />
+                                : filePaths[item.key]
+                                  ? <Check className="w-3.5 h-3.5 flex-shrink-0" />
+                                  : <Upload className="w-3.5 h-3.5 flex-shrink-0" />}
+                              <span className="truncate">
+                                {fileUploading[item.key] ? "Uploading..." : fileNames[item.key] || "Select file"}
+                              </span>
+                              {filePaths[item.key] && <span className="ml-auto text-[10px] text-green-400 flex-shrink-0">Uploaded</span>}
+                              <input type="file" className="hidden" disabled={fileUploading[item.key]} onChange={async (e) => {
+                                const f = e.target.files?.[0];
+                                if (!f) return;
+                                setFileNames((prev) => ({ ...prev, [item.key]: f.name }));
+                                setFileUploading((prev) => ({ ...prev, [item.key]: true }));
+                                const safeName = f.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+                                const path = `${Date.now()}-${safeName}`;
+                                const { error } = await supabase.storage.from("lrmb-onboarding").upload(path, f);
+                                if (!error) {
+                                  setFilePaths((prev) => ({ ...prev, [item.key]: path }));
+                                }
+                                setFileUploading((prev) => ({ ...prev, [item.key]: false }));
+                              }} />
                             </label>
                             <input value={formData[notesKey] ?? ""} onChange={(e) => set(notesKey, e.target.value)} placeholder="Notes or Google Drive link..."
                               className="w-full px-3 py-2 rounded-lg bg-white/[0.05] border border-white/[0.08] text-gray-200 text-xs placeholder-gray-600 outline-none focus:border-blue-500/50 transition-colors" />
@@ -750,7 +772,7 @@ const LrmbOnboarding = () => {
                   setSubmitError(null);
                   const { error } = await supabase.from("form_submissions").insert({
                     client: "lrmb",
-                    data: { formData, staffRows, adminRows, fileNames: Object.keys(fileNames) },
+                    data: { formData, staffRows, adminRows, fileNames, filePaths },
                   });
                   if (error) {
                     setSubmitError("Something went wrong. Please try again or email your answers to contact@montekristobelgrade.com.");

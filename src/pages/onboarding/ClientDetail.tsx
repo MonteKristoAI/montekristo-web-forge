@@ -1,10 +1,9 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ExternalLink, Sparkles, ArrowLeft, ClipboardList } from "lucide-react";
+import { ExternalLink, ArrowLeft } from "lucide-react";
 import { useClientBySlug, useAllClientsWithSignals } from "@/lib/mk-onboarding/useClientData";
-import { Surface, StatusPill, HealthRing, Pill, Skeleton } from "./components/primitives";
-import { AIChatPanel } from "./components/AIChatPanel";
+import { StatusPill, HealthRing, Pill, Skeleton } from "./components/primitives";
 import OverviewTab from "./tabs/OverviewTab";
 import BusinessTab from "./tabs/BusinessTab";
 import WebPresenceTab from "./tabs/WebPresenceTab";
@@ -16,7 +15,6 @@ import DocumentsTab from "./tabs/DocumentsTab";
 import PerformanceTab from "./tabs/PerformanceTab";
 import OpenQuestionsTab from "./tabs/OpenQuestionsTab";
 import ActivityTab from "./tabs/ActivityTab";
-import MeetingPrepTab from "./tabs/MeetingPrepTab";
 
 const TABS = [
   { key: "overview", label: "Overview" },
@@ -30,7 +28,6 @@ const TABS = [
   { key: "performance", label: "Performance" },
   { key: "questions", label: "Pitanja" },
   { key: "activity", label: "Activity" },
-  { key: "prep", label: "Meeting Prep" },
 ] as const;
 
 export default function ClientDetail() {
@@ -38,7 +35,6 @@ export default function ClientDetail() {
   const { data: client, isLoading, refetch } = useClientBySlug(slug);
   const { data: allClients = [] } = useAllClientsWithSignals();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [chatOpen, setChatOpen] = useState(false);
 
   const tab = searchParams.get("tab") ?? "overview";
   const setTab = (t: string) => {
@@ -166,29 +162,6 @@ export default function ClientDetail() {
               value={signals?.daysSinceLastShip ?? "—"}
             />
           </div>
-
-          <div className="flex items-center gap-2 mt-6">
-            <button
-              onClick={() => setChatOpen(true)}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-gradient-to-r from-[#FF5C5C] to-[#E04848] text-white font-inter text-xs font-medium shadow-[0_6px_16px_-6px_rgba(255,92,92,0.6)] hover:shadow-[0_10px_24px_-6px_rgba(255,92,92,0.8)] transition-shadow"
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              AI co-pilot
-            </button>
-            <button
-              onClick={() => setTab("business")}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white/5 border border-white/10 text-[#F5F0E6] font-inter text-xs hover:bg-white/10 transition-colors"
-            >
-              Growth ideas
-            </button>
-            <button
-              onClick={() => setTab("prep")}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white/5 border border-white/10 text-[#F5F0E6] font-inter text-xs hover:bg-white/10 transition-colors"
-            >
-              <ClipboardList className="w-3.5 h-3.5" />
-              Meeting prep
-            </button>
-          </div>
         </div>
       </motion.div>
 
@@ -227,10 +200,7 @@ export default function ClientDetail() {
         {tab === "performance" && <PerformanceTab client={client} />}
         {tab === "questions" && <OpenQuestionsTab client={client} />}
         {tab === "activity" && <ActivityTab client={client} />}
-        {tab === "prep" && <MeetingPrepTab client={client} />}
       </div>
-
-      <AIChatPanel client={client} open={chatOpen} onClose={() => setChatOpen(false)} />
     </div>
   );
 }

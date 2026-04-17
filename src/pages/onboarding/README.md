@@ -1,29 +1,24 @@
-# MonteKristo Onboarding Portal — Level 10
+# MonteKristo Onboarding Portal
 
-Interni AI-powered command center za MK tim. Deploy-uje se kao ruta `/onboarding/*` na `montekristobelgrade.com`.
+Interni command center za MK tim. Cist CRUD nad Supabase tabelama — podaci se unose u formu i cuvaju "as-is" u bazi. **Bez AI zavisnosti, bez externih API key-eva.**
 
-**Samo za interno koriscenje.** Svi AI pozivi zahtevaju autentifikovanu sesiju.
+**Samo za interno koriscenje.** Deploy-uje se kao ruta `/onboarding/*` na `montekristobelgrade.com`.
 
 ---
 
-## Level 10 differentiators vs Level 1
+## Feature set
 
-| Kapacitet | Level 1 | Level 10 |
-|---|---|---|
-| UI | Plain shadcn na svetloj pozadini | Dark "command center" sa glass cards, motion, gradient hero per klijent, coral accents |
-| Navigacija | Top navbar + tabs | Fixed sidebar + breadcrumbs + CMD+K global search + motion-animated tab underline |
-| Portfolio pregled | Grid cards | Service heatmap (klijent × servis) + health-colored cells + sort po health/activity |
-| Health signal | Nema | 0-100 score po klijentu (blokeri, stare pitanja, dani bez ship-a, itd.) — HealthRing SVG na svakoj kartici |
-| AI chat | Nema | Streaming Claude panel scoped per-klijent, full profil u system prompt-u, persisted history |
-| AI growth ideas | Nema | Generator klika → 5 strukturisanih ideja sa impact/effort/tags → accept/reject u `mk_growth_ideas` |
-| AI meeting prep | Nema | One-click pre-call brief generisan iz celog profila → MD download ili copy |
-| Auto-enrichment | Manuelni unos | "Popuni iz URL-a" — PageSpeed + OG scraper + schema detector + CMS fingerprinting |
-| Skill launchers | Nema | Svaki deliverable ima "Launch" dugme koje generise Claude Code prompt za odgovarajuci skill (/blog write, /meta-ads, /retell-agent-builder, /seo-audit, /montekristo-website, itd.) |
-| Performance charts | Mini bar SVG | Recharts LineChart sa tooltipom + delta indikator |
-| Activity feed | Per-klijent tab | Globalni activity feed + per-klijent tab + home feed widget |
-| Empty states | Plain text | Framer-motion animated, icon + hint + optional action |
-| Keyboard | Nema | CMD+K command palette, ESC, arrow navigation kroz palette |
-| Design tokens | Ad-hoc | Centralizovana theme datoteka: bg, border, text, accent, status, health, shadow, motion |
+- 15 pre-seeded klijenata + "Dodaj klijenta" flow
+- 11 tabova po klijentu: Overview, Biznis & Marketing, Web presence, Integracije, Deliverables (Kanban sa skill launchers), Brand voice, Kontakti, Dokumenti, Performance (Recharts), Otvorena pitanja, Activity
+- Dashboard: 4 KPI stat-a, mini portfolio heatmap, global activity feed, client grid sa Health scores i sparkline-ima
+- Portfolio heatmap: client × service matrix sortiran po health score-u
+- Client Health Score: 0-100, deriviran iz blokera, otvorenih pitanja, dana bez ship-a, data completeness
+- Global CMD+K command palette (cmdk)
+- Dark "command center" dizajn sa glass cards, framer-motion transitions
+- Debounced save na svim poljima (600ms) sa saving/saved/error badge-om
+- Inline audit log (per-klijent + globalni)
+- Skill launchers na deliverables: copy Claude Code prompt u clipboard za `/blog write`, `/montekristo-website`, `/retell-agent-builder`, `/meta-ads`, `/seo-audit`, itd.
+- Auto-enrichment Web presence polja iz URL-a (PageSpeed + OG + CMS detection) — bez AI, bez API key-a
 
 ---
 
@@ -33,21 +28,20 @@ Interni AI-powered command center za MK tim. Deploy-uje se kao ruta `/onboarding
 src/pages/onboarding/
 ├── theme.ts                      ← design tokens + health/status/service helpers
 ├── components/
-│   ├── primitives.tsx            ← Surface, Section, StatBlock, Pill, StatusPill, HealthRing, Sparkline, Skeleton, EmptyState, Kbd, inputCls, textareaCls, selectCls
+│   ├── primitives.tsx            ← Surface, Section, StatBlock, Pill, HealthRing, Sparkline, Skeleton, EmptyState, Kbd
 │   ├── Layout.tsx                ← sidebar + topbar + breadcrumbs
-│   ├── CommandPalette.tsx        ← cmdk-powered CMD+K palette
-│   └── AIChatPanel.tsx           ← streaming Claude chat drawer
+│   └── CommandPalette.tsx        ← cmdk-powered CMD+K palette
 ├── Dashboard.tsx                 ← KPI stats + heatmap + activity feed + client grid
-├── Portfolio.tsx                 ← full portfolio heatmap (service × client matrix)
+├── Portfolio.tsx                 ← full portfolio heatmap
 ├── ActivityAll.tsx               ← global activity audit log
-├── ClientDetail.tsx              ← gradient hero + 12 tabs + AI co-pilot
-├── OnboardingLogin.tsx           ← dark auth screen
-├── NewClient.tsx                 ← minimal onboarding form
-├── OnboardingRoutes.tsx          ← protected routing shell
-└── tabs/                         ← 12 tabs, all dark theme, inline-save
+├── ClientDetail.tsx              ← hero + 11 tabs
+├── OnboardingLogin.tsx
+├── NewClient.tsx
+├── OnboardingRoutes.tsx
+└── tabs/                         ← 11 tabs, dark theme, inline debounced save
     ├── OverviewTab.tsx
-    ├── BusinessTab.tsx           ← + AI growth ideas generator
-    ├── WebPresenceTab.tsx        ← + auto-enrichment
+    ├── BusinessTab.tsx
+    ├── WebPresenceTab.tsx        ← + auto-enrichment button
     ├── IntegrationsTab.tsx       ← categorized + secret-masking
     ├── DeliverablesTab.tsx       ← Kanban + skill launchers
     ├── BrandVoiceTab.tsx
@@ -55,78 +49,39 @@ src/pages/onboarding/
     ├── DocumentsTab.tsx
     ├── PerformanceTab.tsx        ← Recharts
     ├── OpenQuestionsTab.tsx
-    ├── ActivityTab.tsx
-    └── MeetingPrepTab.tsx        ← + AI pre-call brief
+    └── ActivityTab.tsx
 
 src/lib/mk-onboarding/
-├── supabase.ts                   ← separate Supabase client (mk-onboarding project)
+├── supabase.ts                   ← dedicated Supabase client (mk-onboarding project)
 ├── useAuth.ts                    ← session hook
 ├── useClientData.ts              ← aggregate signals via react-query
 ├── useSavedField.tsx             ← debounced save + status badge
 ├── healthScore.ts                ← derived 0-100 health metric
-├── buildClientContext.ts         ← full-profile markdown for AI context
+├── buildClientContext.ts         ← edgeFnUrl + EDGE_FN_ANON helpers
 └── skillLauncher.ts              ← deliverable type → Claude Code prompt
 
 supabase/functions/
-├── mk-ai-chat/index.ts           ← Anthropic streaming chat (SSE)
-├── mk-growth-ideas/index.ts      ← One-shot 5-idea generator (structured JSON)
-├── mk-meeting-prep/index.ts      ← Pre-call brief (markdown)
-└── mk-enrich-web/index.ts        ← PageSpeed + OG scraper + CMS fingerprint
+└── mk-enrich-web/index.ts        ← PageSpeed + OG scraper + CMS fingerprint (no external API key)
 ```
 
 ---
 
-## Deploy edge funkcije (prvi put, ~5 min)
+## Deploy edge fn
 
-Pošto koriste Anthropic API, edge fn treba da bude deploy-ovana u Supabase projekt `tydafqhnzxmrpnclaxnl` sa `ANTHROPIC_API_KEY` kao secret-om.
-
-### 1. Instaliraj Supabase CLI (ako nije)
+Jedna edge funkcija je u upotrebi (`mk-enrich-web`), koristi free-tier PageSpeed Insights i HTML scraping. Ne zahteva nikakve API key-eve.
 
 ```bash
-brew install supabase/tap/supabase
+cd supabase/functions
+./deploy-edge-fns.sh
 ```
 
-### 2. Login + link projekt
-
-```bash
-cd /Users/milanmandic/Desktop/montekristo-web-forge
-supabase login
-supabase link --project-ref tydafqhnzxmrpnclaxnl
-```
-
-### 3. Dodaj secret
-
-```bash
-supabase secrets set ANTHROPIC_API_KEY=sk-ant-api03-... --project-ref tydafqhnzxmrpnclaxnl
-```
-
-Opciono (za PSI quota):
-
-```bash
-supabase secrets set PAGESPEED_API_KEY=AIza... --project-ref tydafqhnzxmrpnclaxnl
-```
-
-### 4. Deploy sve cetiri fn
-
-```bash
-supabase functions deploy mk-ai-chat --project-ref tydafqhnzxmrpnclaxnl
-supabase functions deploy mk-growth-ideas --project-ref tydafqhnzxmrpnclaxnl
-supabase functions deploy mk-meeting-prep --project-ref tydafqhnzxmrpnclaxnl
-supabase functions deploy mk-enrich-web --project-ref tydafqhnzxmrpnclaxnl
-```
-
-Ili jedan `./deploy-edge-fns.sh` (pogledaj ispod).
-
-### 5. Verifikuj
-
-U portalu: otvori bilo kog klijenta → "AI co-pilot" → pitaj nesto. Ako odgovor dolazi, fn radi.
-Ako dobijes gresku: `supabase functions logs mk-ai-chat --project-ref tydafqhnzxmrpnclaxnl --tail`.
+Opcionalno: `supabase secrets set PAGESPEED_API_KEY=AIza... --project-ref tydafqhnzxmrpnclaxnl` ako ti treba veci PSI quota.
 
 ---
 
 ## Vault sync
 
-Kao u Lvl1 — hourly LaunchAgent + `_internal/scripts/sync-vault.ts`. Auto-commit-uje u `MonteKristo Vault/context/clients/`.
+Hourly LaunchAgent + `_internal/scripts/sync-vault.ts` (u MK AI repo-u). Auto-commit-uje u `MonteKristo Vault/context/clients/`.
 
 ---
 
@@ -142,7 +97,22 @@ npm run dev  # http://localhost:8080/onboarding/login
 
 ## Data model
 
-Vidi migracije `mk_onboarding_schema_v1` + `mk_fix_audit_trigger` u Supabase projekat `tydafqhnzxmrpnclaxnl`. 12 tabela pod `mk_` prefixom. Svi triger audit + updated_at. RLS kroz `mk_is_team_member()` policy helper.
+12 Supabase tabela pod `mk_` prefixom u projektu `tydafqhnzxmrpnclaxnl`:
+
+- `mk_team_members` — whitelist kolega sa pristupom
+- `mk_clients` — osnovni profil
+- `mk_client_contacts` — vise kontakata po klijentu
+- `mk_client_integrations` — GHL/Retell/n8n/CF/Stripe IDs sa secret flag-om
+- `mk_client_deliverables` — Kanban po statusu
+- `mk_client_brand_voice` — tone, banned vocab, required phrases, persona, ICP
+- `mk_client_marketing_audit` — positioning, channels, offers, bottlenecks, growth ideas
+- `mk_client_web_presence` — domain, CWV, Lighthouse, keywords, social profiles
+- `mk_client_performance_snapshots` — weekly metrike
+- `mk_client_documents` — linkovi ka assets-ima
+- `mk_client_open_questions` — queue pitanja za poziv
+- `mk_client_update_log` — immutable audit trail (trigger-ovan)
+
+Sve tabele RLS-enabled preko `mk_is_team_member()` policy helper-a.
 
 ---
 
@@ -151,10 +121,8 @@ Vidi migracije `mk_onboarding_schema_v1` + `mk_fix_audit_trigger` u Supabase pro
 | Sta | Gde |
 |---|---|
 | `⌘K` / `Ctrl+K` | CMD+K command palette (globalni) |
-| `ESC` | Zatvori palette / chat |
-| `Enter` u chat-u | Salji poruku |
-| `Shift+Enter` u chat-u | Novi red |
+| `ESC` | Zatvori palette |
 
 ---
 
-_Level 10 completed 2026-04-17 by Milan + Claude (MK CEO Agent)._
+_MonteKristo Internal Onboarding — 100% CRUD nad Supabase, bez AI zavisnosti._

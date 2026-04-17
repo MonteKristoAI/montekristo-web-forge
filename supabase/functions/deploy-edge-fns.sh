@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
-# Deploy all MK onboarding edge functions to the tydafqhnzxmrpnclaxnl Supabase project.
-# Requires: supabase CLI authenticated, ANTHROPIC_API_KEY secret set.
+# Deploy MK onboarding edge functions to the tydafqhnzxmrpnclaxnl Supabase project.
+#
+# Currently only one function:
+#   - mk-enrich-web: free PageSpeed + OG/schema scraper (no external API key required)
 #
 # Usage:
 #   cd /Users/milanmandic/Desktop/montekristo-web-forge/supabase/functions
@@ -9,7 +11,7 @@
 set -euo pipefail
 
 PROJECT_REF="tydafqhnzxmrpnclaxnl"
-FNS=(mk-ai-chat mk-growth-ideas mk-meeting-prep mk-enrich-web)
+FNS=(mk-enrich-web)
 
 for fn in "${FNS[@]}"; do
   echo ""
@@ -18,7 +20,4 @@ for fn in "${FNS[@]}"; do
 done
 
 echo ""
-echo "Done. Verify:"
-for fn in "${FNS[@]}"; do
-  echo "  curl -sSfI https://${PROJECT_REF}.supabase.co/functions/v1/${fn}"
-done
+echo "Done."

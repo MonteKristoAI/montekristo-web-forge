@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
 import { mkSupabase, type MkClient } from "@/lib/mk-onboarding/supabase";
 import { useSavedField, SaveBadge } from "@/lib/mk-onboarding/useSavedField";
-import { Section, FieldLabel, inputCls, textareaCls, Pill } from "../components/primitives";
-import { buildClientContextMarkdown, edgeFnUrl, EDGE_FN_ANON } from "@/lib/mk-onboarding/buildClientContext";
-import { Sparkles, Loader2, Plus, Check, X } from "lucide-react";
-import { toast } from "sonner";
+import { Section, FieldLabel, inputCls, textareaCls } from "../components/primitives";
 
 type Audit = {
   id: string;
@@ -19,19 +16,8 @@ type Audit = {
   last_reviewed_at: string | null;
 };
 
-type GeneratedIdea = {
-  title: string;
-  rationale: string;
-  next_step: string;
-  impact: string;
-  effort: string;
-  tags: string[];
-};
-
 export default function BusinessTab({ client }: { client: MkClient }) {
   const [audit, setAudit] = useState<Audit | null>(null);
-  const [generating, setGenerating] = useState(false);
-  const [generatedIdeas, setGeneratedIdeas] = useState<GeneratedIdea[]>([]);
 
   const load = async () => {
     const { data } = await mkSupabase
@@ -54,60 +40,6 @@ export default function BusinessTab({ client }: { client: MkClient }) {
     load();
   }, [client.id]);
 
-  const generateIdeas = async () => {
-    setGenerating(true);
-    setGeneratedIdeas([]);
-    try {
-      const context = await buildClientContextMarkdown(client);
-      const { data: sess } = await mkSupabase.auth.getSession();
-      const bearer = sess.session?.access_token ?? EDGE_FN_ANON;
-      const res = await fetch(edgeFnUrl("mk-growth-ideas"), {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${bearer}`,
-          apikey: EDGE_FN_ANON,
-        },
-        body: JSON.stringify({ clientContext: context }),
-      });
-      if (!res.ok) throw new Error(await res.text());
-      const data = await res.json();
-      if (Array.isArray(data?.ideas)) {
-        setGeneratedIdeas(data.ideas);
-      } else {
-        toast.error("Model nije vratio ideje u ocekivanoj formi.");
-        console.error(data);
-      }
-    } catch (e) {
-      toast.error("Greska pri generisanju. Edge fn mora biti deploy-ovana sa ANTHROPIC_API_KEY.");
-      console.error(e);
-    } finally {
-      setGenerating(false);
-    }
-  };
-
-  const acceptIdea = async (idea: GeneratedIdea) => {
-    if (!audit) return;
-    const block = `## ${idea.title}\n\n${idea.rationale}\n\n**Next step:** ${idea.next_step}\n\n_impact: ${idea.impact} · effort: ${idea.effort} · tags: ${idea.tags?.join(", ") ?? ""}_\n\n---\n\n`;
-    const next = (audit.mk_growth_ideas ?? "") + "\n\n" + block;
-    const { error } = await mkSupabase
-      .from("mk_client_marketing_audit")
-      .update({ mk_growth_ideas: next, last_reviewed_at: new Date().toISOString() })
-      .eq("id", audit.id);
-    if (error) {
-      toast.error("Greska pri cuvanju.");
-      console.error(error);
-      return;
-    }
-    toast.success("Ideja dodata u MK growth ideas.");
-    setGeneratedIdeas((prev) => prev.filter((x) => x.title !== idea.title));
-    load();
-  };
-
-  const rejectIdea = (idea: GeneratedIdea) => {
-    setGeneratedIdeas((prev) => prev.filter((x) => x.title !== idea.title));
-  };
-
   if (!audit) return <p className="font-inter text-sm text-[#5A6577]">Ucitavam…</p>;
 
   const save = (fields: Partial<Audit>) => async () => {
@@ -115,25 +47,15 @@ export default function BusinessTab({ client }: { client: MkClient }) {
     if (error) throw error;
   };
 
-  return <Form audit={audit} onSave={save} onGenerate={generateIdeas} generating={generating} generatedIdeas={generatedIdeas} onAccept={acceptIdea} onReject={rejectIdea} />;
+  return <Form audit={audit} onSave={save} />;
 }
 
 function Form({
   audit,
   onSave,
-  onGenerate,
-  generating,
-  generatedIdeas,
-  onAccept,
-  onReject,
 }: {
   audit: Audit;
   onSave: (fields: Partial<Audit>) => () => Promise<void>;
-  onGenerate: () => void;
-  generating: boolean;
-  generatedIdeas: GeneratedIdea[];
-  onAccept: (idea: GeneratedIdea) => void;
-  onReject: (idea: GeneratedIdea) => void;
 }) {
   const [pos, setPos, posStatus] = useSavedField(audit.positioning_strength ?? "", async (v) => {
     await onSave({ positioning_strength: v === "" ? null : Number(v) })();
@@ -183,7 +105,7 @@ function Form({
         </div>
       </Section>
 
-      <Section title="Conversion bottlenecks" description="Gde se konverzija lomi? Ovo AI chat i growth generator koriste kao ulaz.">
+      <Section title="Conversion bottlenecks" description="Gde se konverzija lomi kod ovog klijenta.">
         <div>
           <FieldLabel hint={<SaveBadge status={bnStatus} />}>Bottlenecks</FieldLabel>
           <textarea value={bottlenecks} onChange={(e) => setBottlenecks(e.target.value)} rows={4} className={textareaCls} placeholder="npr. 'landing page bez social proof', 'booking form predugacak'…" />
@@ -192,73 +114,9 @@ function Form({
 
       <Section
         title="MK growth ideas"
-        description="Sta bi uradili ako bi ovo bio NAS biznis. AI generator koristi ceo profil za predloge."
-        action={
-          <button
-            onClick={onGenerate}
-            disabled={generating}
-            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-gradient-to-r from-[#FF5C5C] to-[#E04848] text-white font-inter text-xs font-medium shadow-[0_6px_16px_-6px_rgba(255,92,92,0.6)] hover:shadow-[0_10px_24px_-6px_rgba(255,92,92,0.8)] transition-shadow disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {generating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
-            {generating ? "Generisem…" : "Generisi 5 ideja"}
-          </button>
-        }
+        description="Sta bi uradili ako bi ovo bio NAS biznis. Slobodan markdown format."
       >
-        {generatedIdeas.length > 0 && (
-          <div className="space-y-2 mb-5">
-            <p className="font-inter text-[10px] uppercase tracking-widest text-[#5A6577] mb-2">Predlozi</p>
-            {generatedIdeas.map((idea, i) => (
-              <div
-                key={i}
-                className="rounded-lg border border-[rgba(255,92,92,0.25)] bg-[rgba(255,92,92,0.04)] p-4"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex-1 min-w-0">
-                    <p className="font-poppins text-sm font-semibold text-[#F5F0E6]">{idea.title}</p>
-                    <p className="font-inter text-xs text-[#9AA5B8] mt-1 leading-relaxed">{idea.rationale}</p>
-                    <p className="font-inter text-xs text-[#F5F0E6] mt-2">
-                      <span className="text-[#FF8A8A] font-medium">Next: </span>
-                      {idea.next_step}
-                    </p>
-                    <div className="flex items-center gap-2 mt-3 flex-wrap">
-                      <Pill variant={idea.impact === "high" ? "success" : idea.impact === "medium" ? "info" : "neutral"}>
-                        impact: {idea.impact}
-                      </Pill>
-                      <Pill variant={idea.effort === "low" ? "success" : idea.effort === "medium" ? "warn" : "danger"}>
-                        effort: {idea.effort}
-                      </Pill>
-                      {idea.tags?.map((t) => (
-                        <Pill key={t} variant="neutral">
-                          {t}
-                        </Pill>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="flex gap-1 shrink-0">
-                    <button
-                      onClick={() => onAccept(idea)}
-                      className="h-8 w-8 rounded-md bg-[rgba(63,185,125,0.15)] text-[#70D7A0] hover:bg-[rgba(63,185,125,0.25)] flex items-center justify-center"
-                      title="Prihvati i ubaci u MK growth ideas"
-                    >
-                      <Check className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => onReject(idea)}
-                      className="h-8 w-8 rounded-md bg-white/5 text-[#9AA5B8] hover:bg-white/10 flex items-center justify-center"
-                      title="Odbaci"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <FieldLabel hint={<SaveBadge status={ideasStatus} />}>
-          Growth ideas (markdown, slobodan format)
-        </FieldLabel>
+        <FieldLabel hint={<SaveBadge status={ideasStatus} />}>Growth ideas</FieldLabel>
         <textarea
           value={ideas}
           onChange={(e) => setIdeas(e.target.value)}
